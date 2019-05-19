@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6f3b0971-d1c1-4caa-a89e-65ab4a3d621a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,8 +20,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="266" column="68" selection-start-line="266" selection-start-column="68" selection-end-line="266" selection-end-column="68" />
+            <state relative-caret-position="187">
+              <caret line="227" column="73" selection-start-line="227" selection-start-column="73" selection-end-line="227" selection-end-column="73" />
               <folding>
                 <element signature="e#32423#32429#0" expanded="true" />
               </folding>
@@ -128,12 +127,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1558266083198</updated>
-      <workItem from="1558266085769" duration="4821000" />
+      <workItem from="1558266085769" duration="5505000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4821000" />
+    <option name="totallyTimeSpent" value="5505000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -203,8 +202,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="266" column="68" selection-start-line="266" selection-start-column="68" selection-end-line="266" selection-end-column="68" />
+        <state relative-caret-position="187">
+          <caret line="227" column="73" selection-start-line="227" selection-start-column="73" selection-end-line="227" selection-end-column="73" />
           <folding>
             <element signature="e#32423#32429#0" expanded="true" />
           </folding>

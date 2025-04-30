@@ -1,121 +1,130 @@
-import './style.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { gsap } from 'gsap'; // Make sure you've imported gsap
 
-// Setup
+// Scene
 const scene = new THREE.Scene();
 
+// Camera
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 0, 5); // Initial camera position
 
+// Renderer
 const renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('#bg'),
+    antialias: true // For smoother edges
 });
-
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
-camera.position.setX(-3);
 
-renderer.render(scene, camera);
-
-//Torus
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-const material = new THREE.MeshStandardMaterial({ color: 0xFF6347});
-const torus = new THREE.Mesh(geometry, material);
-
-scene.add(torus);
-
-// Lights
-const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(5,5,5);
-
-const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(pointLight, ambientLight);
-
-// Helpers
-//const lightHelper = new THREE.PointLightHelper(pointLight);
-//const gridHelper = new THREE.GridHelper(200, 50);
-//scene.add(lightHelper);
-
+// Orbit Controls (for initial development and later camera panning)
 const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; // Add damping for smoother panning
+controls.dampingFactor = 0.05;
 
-function addStar(){
-  const geometry = new THREE.SphereGeometry(0.25, 24, 24);
-  const material = new THREE.MeshStandardMaterial({ color: 0xffffff});
-  const star = new THREE.Mesh(geometry, material);
+// Lighting (essential for a good 3D scene)
+const ambientLight = new THREE.AmbientLight(0x404040); // Soft overall lighting
+const pointLight = new THREE.PointLight(0xffffff, 1);
+pointLight.position.set(5, 5, 5);
+scene.add(ambientLight, pointLight);
 
-  const [x, y, z] = Array(3)
-    .fill()
-    .map(() => THREE.MathUtils.randFloatSpread(100));
+// Add some initial background geometry (e.g., a grid, some abstract shapes)
+const gridHelper = new THREE.GridHelper(20, 20);
+scene.add(gridHelper);
 
-  star.position.set(x, y, z);
-  scene.add(star);
+// Animation loop
+function animate() {
+    requestAnimationFrame(animate);
+
+    controls.update(); // Important for OrbitControls to work
+
+    renderer.render(scene, camera);
 }
-
-Array(200).fill().forEach(addStar);
-
-// Background
-const spaceTexture = new THREE.TextureLoader().load('space.jpg'); //If you are using Vite, place the image in a public/ folder (not src/) and import it like this: import space from '../public/space.jpg';
-scene.background = spaceTexture;//Can also call the image using the filename in ' ' like 'space.jpg'.
-
-// Avatar
-
-const jeffTexture = new THREE.TextureLoader().load('jeff.png');
-
-const jeff = new THREE.Mesh(
-  new THREE.BoxGeometry(3,3,3),
-  new THREE.MeshBasicMaterial({ map: jeffTexture })
-);
-scene.add(jeff);
-
-// Moon
-const moonTexture = new THREE.TextureLoader().load('moon.jpg');
-const normalTexture = new THREE.TextureLoader().load('normal.jpg');
-
-const moon = new THREE.Mesh(
-  new THREE.SphereGeometry(3, 32, 32),
-  new THREE.MeshStandardMaterial({ 
-    map: moonTexture, 
-    normalMap: normalTexture
-  })
-);
-scene.add(moon);
-
-moon.position.z = 30;
-moon.position.setX(-10);
-
-jeff.position.z = -5;
-jeff.position.x = 2;
-
-function moveCamera() {
-  const t = document.body.getBoundingClientRect().top;
-  moon.rotation.x += 0.05;
-  moon.rotation.y += 0.075;
-  moon.rotation.z += 0.05;
-
-  jeff.rotation.y += 0.01;
-  jeff.rotation.z += 0.01;
-
-  camera.position.z = t * -0.01;
-  camera.position.x = t * -0.0002;
-  camera.rotation.y = t * -0.0002;
-}
-
-document.body.onscroll = moveCamera;
-
-function animate(){
-  requestAnimationFrame(animate);
-
-  torus.rotation.x += 0.01;
-  torus.rotation.y += 0.005;
-  torus.rotation.z += 0.01;
-
-
-
-  controls.update();
-
-  renderer.render(scene, camera);
-}
-
 
 animate();
+
+// Handle window resizing
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Example: Creating a few "portfolio element" geometries
+const geometry1 = new THREE.BoxGeometry(1, 1, 1);
+const material1 = new THREE.MeshStandardMaterial({ color: 0xff00ff });
+const portfolioElement1 = new THREE.Mesh(geometry1, material1);
+portfolioElement1.position.set(-3, 0, 0);
+portfolioElement1.name = 'portfolioElement1'; // Give it a name for identification
+scene.add(portfolioElement1);
+
+const geometry2 = new THREE.SphereGeometry(0.75, 32, 32);
+const material2 = new THREE.MeshStandardMaterial({ color: 0x00ffff });
+const portfolioElement2 = new THREE.Mesh(geometry2, material2);
+portfolioElement2.position.set(0, 1.5, -2);
+portfolioElement2.name = 'portfolioElement2';
+scene.add(portfolioElement2);
+
+const geometry3 = new THREE.CylinderGeometry(0.5, 0.5, 2, 32);
+const material3 = new THREE.MeshStandardMaterial({ color: 0xffff00 });
+const portfolioElement3 = new THREE.Mesh(geometry3, material3);
+portfolioElement3.position.set(3, -1, 1);
+portfolioElement3.name = 'portfolioElement3';
+scene.add(portfolioElement3);
+
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+
+function onPointerMove(event) {
+    // Calculate normalized mouse coordinates (-1 to +1)
+    pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+    pointer.y = -(event.clientY / window.innerHeight) * 2 + 1;
+}
+
+function onPointerClick() {
+    // Update the ray with the camera and pointer position
+    raycaster.setFromCamera(pointer, camera);
+
+    // Calculate objects intersecting the ray
+    const intersects = raycaster.intersectObjects(scene.children);
+
+    if (intersects.length > 0) {
+        const clickedObject = intersects[0].object;
+        console.log('Clicked object:', clickedObject.name);
+
+        // Handle the click based on the object's name or some other identifier
+        if (clickedObject.name === 'portfolioElement1') {
+            panCameraTo(new THREE.Vector3(-5, 0, 3)); // Define your target position
+        } else if (clickedObject.name === 'portfolioElement2') {
+            panCameraTo(new THREE.Vector3(0, 3, 0));
+        } else if (clickedObject.name === 'portfolioElement3') {
+            panCameraTo(new THREE.Vector3(5, -2, -1));
+        }
+    }
+}
+
+
+
+function panCameraTo(targetPosition) {
+    gsap.to(camera.position, {
+        duration: 1.5,
+        x: targetPosition.x,
+        y: targetPosition.y,
+        z: targetPosition.z,
+        ease: 'power2.easeInOut'
+    });
+
+    gsap.to(controls.target, {
+        duration: 1.5,
+        x: targetPosition.x,
+        y: targetPosition.y,
+        z: targetPosition.z,
+        ease: 'power2.easeInOut',
+        onUpdate: () => {
+            controls.update();
+        }
+    });
+}
+
+window.addEventListener('mousemove', onPointerMove);
+window.addEventListener('click', onPointerClick);

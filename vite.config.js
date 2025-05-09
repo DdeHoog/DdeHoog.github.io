@@ -1,13 +1,7 @@
-// vite.config.js
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
-  // Base path for your GitHub user page repository (<username>.github.io)
-  base: '/',
-
-  // Specify the output directory (standard is 'dist')
-  build: {
-    outDir: 'dist'
-  }
-  // Note: No comma after the 'build' object if it's the last item
-});
+  plugins: [react()],
+})

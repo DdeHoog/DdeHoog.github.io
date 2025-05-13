@@ -1,0 +1,56 @@
+.hero-container {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* absolutely position the Canvas to fill the container */
+.hero-canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%  !important;
+  height: 100% !important;
+}
+
+/* Optional styling for the whole app */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. This targets *only* the .hero-content element that lives inside .canvas-container */
+.hero-container .hero-content {
+  position: relative;     /* ensure this element participates in stacking; doesn’t remove it from flow */
+  z-index: 1;             /* put it “above” any siblings with default z-index (e.g. the Canvas) */
+  color: white;           /* make text white so it’s legible over a dark 3D background */
+  padding: 2rem;          /* give some breathing room around your text/buttons */
+  display: flex;          /* use Flexbox for easy centering of the contents */
+  flex-direction: column; /* stack children (h1, p, buttons…) vertically */
+  align-items: center;    /* horizontally center each child */
+  justify-content: center;/* vertically center them within the full height */
+  height: 100%;           /* stretch this overlay to fill the container’s height */
+  text-align: center;     /* center the text inside each block element */
+  pointer-events: none; /* let everything pass through - making the text area non-clickable*/
+}
+.hero-content1 {
+  position: absolute;      /* take it out of the flow */
+  top: 25%; left: 50%;     /* center it… */
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+  color: white;
+
+  /* no height:100% here—so clicks outside the text box hit the canvas */
+}

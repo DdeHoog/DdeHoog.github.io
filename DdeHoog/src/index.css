@@ -114,7 +114,7 @@ html, body, #root {
   margin-bottom: 0.5rem; /* Adjust as needed */
   text-decoration: none;
   color: white;
-  font-size: 1rem;
+  font-size: 0.6rem;
   letter-spacing: 0.1em;
   font-weight: bold;
   pointer-events: auto; /* Make the link clickable */
@@ -122,9 +122,25 @@ html, body, #root {
   transition: opacity 2s ease-in-out; /* Match the hero-content transition */
 }
 
+.hero-content-credits.visible {
+  opacity: 1;
+}
+
+.hero-content-credits a {
+  color: inherit;  /* same color as text */
+  text-decoration: underline;
+  font-weight: bold;
+  cursor: pointer;
+}
+.hero-content-credits a:hover,
+.hero-content-credits a:focus {
+  color: #7b9aff;       /* slightly brighter on hover/focus */
+  outline: none;        /* optional: you can add custom focus styles */
+}
+
 .planet-card {
-  width: 70vw;
-  height: 70vh;
+  width: 50vw;
+  height: 50vh;
   background-color: white;
   color: black;
   border-radius: 12px;

@@ -29,28 +29,119 @@ html, body, #root {
   padding: 0;
 }
 
-/* 2. This targets *only* the .hero-content element that lives inside .canvas-container */
-.hero-container .hero-content {
-  position: relative;     /* ensure this element participates in stacking; doesn’t remove it from flow */
-  z-index: 1;             /* put it “above” any siblings with default z-index (e.g. the Canvas) */
-  color: white;           /* make text white so it’s legible over a dark 3D background */
-  padding: 2rem;          /* give some breathing room around your text/buttons */
-  display: flex;          /* use Flexbox for easy centering of the contents */
-  flex-direction: column; /* stack children (h1, p, buttons…) vertically */
-  align-items: center;    /* horizontally center each child */
-  justify-content: center;/* vertically center them within the full height */
-  height: 100%;           /* stretch this overlay to fill the container’s height */
-  text-align: center;     /* center the text inside each block element */
-  pointer-events: none; /* let everything pass through - making the text area non-clickable*/
+/* .hero-content.visible overwrites hero-content opcaity for fade-in-n-out */
+.hero-content.visible {
+  opacity: 1; 
+  
 }
-.hero-content1 {
-  position: absolute;      /* take it out of the flow */
-  top: 25%; left: 50%;     /* center it… */
+.hero-content {
+ position: absolute;      /* take it out of the flow */
+  top: 25%; left: 50%;     /* horizontally centered, verically 1/4th down above the head of the model */
   transform: translate(-50%, -50%);
   z-index: 1;
-  text-align: center;
   padding: 2rem;
   color: white;
+  text-align: center;     /* center the text inside each block element */
+  pointer-events: none; /* let everything pass through - making the text area non-clickable*/
+  opacity: 0;
+  transition: opacity 2s ease-in-out; /* Animated in and out*/
+}
 
-  /* no height:100% here—so clicks outside the text box hit the canvas */
+@media (prefers-reduced-motion: reduce) { /*For users with reduced motion pref*/
+  .hero-content {
+    transition: none !important;
+  }
+}
+
+.navbar {
+  position: fixed; /* Stays on top when scrolling */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px; /* Adjust as needed */
+  background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent black */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2rem;
+  color: white;
+  font-weight: bold;
+  z-index: 10; /* above 3D canvas and content */
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+}
+
+.navbar-left a {
+  margin-left: -0.5rem; /* adjust to left slightly */
+  text-decoration: none; /* removes underline */
+  color: white;          /* ensures it's white, not default link color */
+  font-size: 2rem;       /* big size */
+  letter-spacing: 0.1em; /* nice spacing */
+  font-weight: bold;     /* bold text */
+  left: 0; /* left aligned */
+}
+.navbar-left a:visited {
+  color: white; /* prevent purple "visited" color */
+}
+
+.navbar-right {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar-right li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.navbar-right li a:hover {
+  color: #00bfff; /* Highlight color on hover */
+}
+
+.hero-content-credits {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  margin-left: 0.5rem; /* Adjust as needed */
+  margin-bottom: 0.5rem; /* Adjust as needed */
+  text-decoration: none;
+  color: white;
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  font-weight: bold;
+  pointer-events: auto; /* Make the link clickable */
+  opacity: 0; /* Initially hidden */
+  transition: opacity 2s ease-in-out; /* Match the hero-content transition */
+}
+
+.planet-card {
+  width: 70vw;
+  height: 70vh;
+  background-color: white;
+  color: black;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
 }

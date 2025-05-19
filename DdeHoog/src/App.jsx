@@ -1,12 +1,16 @@
 import './App.css'
-import { Contact, Experience, Hero, Portfolio } from './components'
-import { Suspense } from 'react';
+import { Contact, Experience, Hero, Portfolio, NavBar } from './components'
+import { Suspense, useRef } from 'react';
 
 
 function App() {
-    return (
+  const heroRef = useRef(); // Ref to access the Hero component
+
+  return (
     <div>
-      <Hero/>
+      <NavBar onLogoClick={() => heroRef.current?.resetCamera()}/>
+      <Hero ref={heroRef}/>
+
     </div>
   )
 }

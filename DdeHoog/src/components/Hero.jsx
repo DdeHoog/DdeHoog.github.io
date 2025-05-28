@@ -2,90 +2,10 @@ import { Canvas, useThree, useFrame} from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Spaceboi from "../../public/Spaceboi";
 import Planets from './Planets';
+import Scene from './Scene';
 import { Suspense, useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// Scene goes inside Canvas and can use useThree()
-function Scene({ activeSection, setActiveSection, fadeInTimeout, setShowContent, shouldResetCamera,
-  setShouldResetCamera, }) {
-  const controlsRef = useRef();
-  const { camera, invalidate } = useThree();
-  const [activePlanetPosition, setActivePlanetPosition] = useState(null);
 
-
-  // Expose  for other methods to use
-  useEffect(() => {
-    if (controlsRef.current) {
-      controlsRef.current.target.set(0, 3.5, 0);
-      camera.position.set(0, 5, 8);
-    }
-  }, []);
-
-  // reset camera on DDH click
-  useEffect(() => {
-    if(shouldResetCamera && controlsRef.current) {
-      controlsRef.current.target.set(0, 3.5, 0);
-      camera.position.set(0, 5, 8);
-      controlsRef.current.update();
-      invalidate();
-
-      setShouldResetCamera(false); // reset the flag
-    }
-  }, [shouldResetCamera]);
-
-  const openSection = (sectionName, planetPosition) => {
-    setActiveSection(sectionName);
-    setActivePlanetPosition(planetPosition);
-
-    if (controlsRef.current && camera) {
-      if (planetPosition) {
-        controlsRef.current.target.set(...planetPosition);
-
-        const offset = [
-          planetPosition[0] + 3,
-          planetPosition[1] + 2,
-          planetPosition[2] + 3,
-        ];
-        camera.position.set(...offset);
-
-        controlsRef.current.update();
-        invalidate();
-      } /*else {
-        controlsRef.current.target.set(0, 3.5, 0);
-        camera.position.set(0, 5, 8);
-        controlsRef.current.update();
-        invalidate();
-      }*/
-    }
-  };
-
-  return (
-    <>
-      <ambientLight intensity={0.5} />
-
-      <OrbitControls
-        ref={controlsRef}
-        enableDamping
-        dampingFactor={0.1}
-        maxPolarAngle={Math.PI / 2}
-        onStart={() => {
-          if (fadeInTimeout.current) {
-            clearTimeout(fadeInTimeout.current);
-          }
-          setShowContent(false);
-        }}
-        onEnd={() => {
-          if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
-          fadeInTimeout.current = setTimeout(() => setShowContent(true), 4000);
-        }}
-      />
-
-      <Suspense fallback={null}>
-        <Spaceboi />
-        <Planets onPlanetClick={openSection} activeSection={activeSection} activePlanetPosition={activePlanetPosition} />
-      </Suspense>
-    </>
-  );
-}
 
 // === Hero Component (wraps layout & Canvas) ===
 const Hero = forwardRef((props, ref) => {
@@ -95,15 +15,17 @@ const Hero = forwardRef((props, ref) => {
   const [activePlanetPosition, setActivePlanetPosition] = useState(null);
   const [shouldResetCamera, setShouldResetCamera] = useState(false);
 
-
+  // Expose resetCamera method to parent components
+  // This allows parent components to reset the camera when needed
+  // This is useful for resetting the camera when the user clicks on the DDH logo
   useImperativeHandle(ref, () => ({
     resetCamera: () => {
       setShouldResetCamera(true); //  set a flag to indicate camera reset
       setActiveSection(null);
       setShowContent(false);
       if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
-      fadeInTimeout.current = setTimeout(() => setShowContent(true), 1000);
-    },
+        fadeInTimeout.current = setTimeout(() => setShowContent(true), 1000);
+      },
   }));
 
   useEffect(() => {
@@ -134,7 +56,7 @@ const Hero = forwardRef((props, ref) => {
 
       <p className={`hero-content-credits ${showContent ? 'visible' : ''}`}>
         "space boi" by{" "}
-        <a href="https://skfb.ly/oyXLG" target="_blank" rel="noopener noreferrer" className='.hero-content-credits'>
+        <a href="https://skfb.ly/oyXLG" target="_blank" rel="noopener noreferrer">
           silvercrow101  
         </a>{" "}
         is licensed under Creative Commons Attribution-NonCommercial license.

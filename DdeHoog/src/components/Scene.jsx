@@ -6,22 +6,28 @@ import { Suspense, useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 
 
-// Scene goes inside Canvas and can use useThree()
+// This component wraps the 3D scene, manages camera transitions and UI state.
 const Scene = ({ 
     activeSection, 
     setActiveSection, 
     fadeInTimeout, 
     setShowContent, 
     shouldResetCamera,
-    setShouldResetCamera, }) => {
-  const controlsRef = useRef();
+    setShouldResetCamera,
+    cardOpen,
+    setCardOpen  
+}) => {
+  const controlsRef = useRef(); // OrbitControls reference
+  const sectionNameRef = useRef(null); // Reference to store the current section name
   const { camera } = useThree();
   const [activePlanetPosition, setActivePlanetPosition] = useState(null);
+  const [isLerping, setIsLerping] = useState(false); // Controls camera animation state
+  const [showCard, setShowCard] = useState(false); // Controls visibility of planet cards
 
-  // Refs for lerping targets
+  // Target camera position and lookAt point
   const targetPosition = useRef(new THREE.Vector3(0, 5, 8));
   const targetLookAt = useRef(new THREE.Vector3(0, 3.5, 0));
-  const [isLerping, setIsLerping] = useState(false);
+  
 
   // Expose initial camera state
   useEffect(() => {
@@ -39,7 +45,7 @@ const Scene = ({
       targetPosition.current.set(0, 5, 8);
 
       setShouldResetCamera(false); // reset the flag
-      setShowContent(false); // optional: fade content during move
+      //setShowContent(false); // hide UI during move
       setIsLerping(true); // set lerping state
     }
   }, [shouldResetCamera]);
@@ -54,7 +60,7 @@ const Scene = ({
       controlsRef.current.target.lerp(targetLookAt.current, 0.1);
       controlsRef.current.update();
 
-      // Close to target check
+      // Close to target check, if close enough, snap to target
       const distance = camera.position.distanceTo(targetPosition.current);
       if (distance < 0.01) {
         camera.position.copy(targetPosition.current);
@@ -62,19 +68,28 @@ const Scene = ({
         controlsRef.current.update();
 
         setIsLerping(false); // stop lerping
-        setShowContent(true); // fade in content after lerp
-      }
-    }
 
+        if(activePlanetPosition){
+          setActiveSection(sectionNameRef.current);// now finally show the card
+          setShowCard(true); // show the card
+        }
+      }
     invalidate(); // triggers a render frame
+    }
   });
 
-  // Function to open a section and set camera position
+  // Function to open a section and set camera position - on planetClick
   const openSection = (sectionName, planetPosition) => {
-    setActiveSection(sectionName);
+    setShowCard(false); // hide and existing active card
+    sectionNameRef.current = sectionName; // Store the section name
+    //setActiveSection(sectionName);
     setActivePlanetPosition(planetPosition);
+    
+    // Check if card is open or close
+    const isOpen = sectionName !== null;
+    setCardOpen(isOpen); // Update card open state
 
-   
+    // Determine target position based on planet clicked
     if (planetPosition) {
       const offset = new THREE.Vector3(
         planetPosition[0] + 2,
@@ -86,10 +101,16 @@ const Scene = ({
       targetPosition.current.copy(offset);
       targetLookAt.current.set(...planetPosition);
 
-      setShowContent(false); // optional: fade content during move
+      // Closing card, restart fade in timer
+      if(!isOpen){
+        setShowContent(false); // hide hero-content on open card
+        if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
+        fadeInTimeout.current = setTimeout(() => {
+          setShowContent(true);
+        }, 4000); //standard 4 sec delay for fade in
+      }
       setIsLerping(true); // set lerping state
-    } 
-    
+    }   
   };
 
   return (
@@ -115,7 +136,12 @@ const Scene = ({
 
       <Suspense fallback={null}>
         <Spaceboi />
-        <Planets onPlanetClick={openSection} activeSection={activeSection} activePlanetPosition={activePlanetPosition} />
+        <Planets 
+          onPlanetClick={openSection} 
+          activeSection={activeSection} 
+          activePlanetPosition={activePlanetPosition} 
+          showCard={showCard}
+        />
       </Suspense>
     </>
   );

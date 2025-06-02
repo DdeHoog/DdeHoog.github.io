@@ -14,6 +14,7 @@ const Hero = forwardRef((props, ref) => {
   const fadeInTimeout = useRef(null);
   const [activePlanetPosition, setActivePlanetPosition] = useState(null);
   const [shouldResetCamera, setShouldResetCamera] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false); // manages html card open for hiding content
 
   // Expose resetCamera method to parent components
   // This allows parent components to reset the camera when needed
@@ -22,10 +23,7 @@ const Hero = forwardRef((props, ref) => {
     resetCamera: () => {
       setShouldResetCamera(true); //  set a flag to indicate camera reset
       setActiveSection(null);
-      setShowContent(false);
-      if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
-        fadeInTimeout.current = setTimeout(() => setShowContent(true), 1000);
-      },
+      } 
   }));
 
   useEffect(() => {
@@ -45,13 +43,15 @@ const Hero = forwardRef((props, ref) => {
           setShowContent={setShowContent}
           shouldResetCamera={shouldResetCamera}
           setShouldResetCamera={setShouldResetCamera}
+          cardOpen={cardOpen}
+          setCardOpen={setCardOpen}
         />
       </Canvas>
 
       {/* Overlay content */}
       <div className={`hero-content ${showContent ? 'visible' : ''}`}>
         <h1>Welcome to My Portfolio</h1>
-        <p>Pan around or click on of the buttons to explore my work</p>
+        <p>Click on one of the planets or buttons to explore my work</p>
       </div>
 
       <p className={`hero-content-credits ${showContent ? 'visible' : ''}`}>

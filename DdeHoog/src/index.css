@@ -4,7 +4,6 @@
   overflow: hidden;
   position: relative;
 }
-
 /* absolutely position the Canvas to fill the container */
 .hero-canvas {
   position: absolute !important;
@@ -13,7 +12,6 @@
   width: 100%  !important;
   height: 100% !important;
 }
-
 /* Optional styling for the whole app */
 body {
   margin: 0;
@@ -21,7 +19,6 @@ body {
   overflow: hidden;
   background: #000;
 }
-
 html, body, #root {
   width: 100%;
   height: 100%;
@@ -29,30 +26,14 @@ html, body, #root {
   padding: 0;
 }
 
-/* .hero-content.visible overwrites hero-content opcaity for fade-in-n-out */
-.hero-content.visible {
-  opacity: 1; 
-  
-}
-.hero-content {
- position: absolute;      /* take it out of the flow */
-  top: 25%; left: 50%;     /* horizontally centered, verically 1/4th down above the head of the model */
-  transform: translate(-50%, -50%);
-  z-index: 1;
-  padding: 2rem;
-  color: white;
-  text-align: center;     /* center the text inside each block element */
-  pointer-events: none; /* let everything pass through - making the text area non-clickable*/
-  opacity: 0;
-  transition: opacity 2s ease-in-out; /* Animated in and out*/
-}
-
+/*Optimisation & accessbility*/
 @media (prefers-reduced-motion: reduce) { /*For users with reduced motion pref*/
   .hero-content {
     transition: none !important;
   }
 }
 
+/*NAVBAR*/
 .navbar {
   position: fixed; /* Stays on top when scrolling */
   top: 0;
@@ -70,7 +51,6 @@ html, body, #root {
   box-sizing: border-box;
   font-family: 'Arial', sans-serif;
 }
-
 .navbar-left a {
   margin-left: -0.5rem; /* adjust to left slightly */
   text-decoration: none; /* removes underline */
@@ -83,7 +63,40 @@ html, body, #root {
 .navbar-left a:visited {
   color: white; /* prevent purple "visited" color */
 }
-
+.ddh-tooltip,
+.hover-tooltip{
+  position: fixed;
+  top: 15px; /*Same vert as navbar*/
+  left: 110px; /* to the right off DDH, refine as needed */
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: normal;
+  opacity: 0;
+  pointer-events: none; /* Prevents interaction */
+  transition: opacity 0.3s ease; /* Smooth fade-in */
+  z-index: 11; /* Above navbar and content */
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif; /* force same font */
+}
+.ddh-tooltip.visible {
+  opacity: 1; /* Make visible when class is added */
+}
+.navbar-left:hover .hover-tooltip {
+  opacity: 1; /* Make visible when class is added */
+  pointer-events: auto; /* Allow interaction when visible */
+}
+.ddh-tooltip .arrow,
+.hover-tooltip .arrow {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-bottom: 8px solid transparent; 
+  border-right: 12px solid white; /* Arrow pointing left*/
+  transform: rotate(360deg); /* Rotate to point right */
+}
 .navbar-right {
   list-style: none;
   display: flex;
@@ -91,7 +104,6 @@ html, body, #root {
   margin: 0;
   padding: 0;
 }
-
 .navbar-right li a {
   color: white;
   text-decoration: none;
@@ -100,11 +112,28 @@ html, body, #root {
   cursor: pointer;
   transition: color 0.3s ease;
 }
-
 .navbar-right li a:hover {
   color: #00bfff; /* Highlight color on hover */
 }
 
+/* HERO CONTENT */
+/* .hero-content.visible overwrites hero-content opcaity for fade-in-n-out */
+.hero-content.visible {
+  opacity: 1; 
+  
+}
+.hero-content {
+ position: absolute;      /* take it out of the flow */
+  top: 25%; left: 50%;     /* horizontally centered, verically 1/4th down above the head of the model */
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  padding: 2rem;
+  color: white;
+  text-align: center;     /* center the text inside each block element */
+  pointer-events: none; /* let everything pass through - making the text area non-clickable*/
+  opacity: 0;
+  transition: opacity 2s ease-in-out; /* Animated in and out*/
+}
 .hero-content-credits {
   position: absolute;
   left: 0;
@@ -121,11 +150,9 @@ html, body, #root {
   opacity: 0; /* Initially hidden */
   transition: opacity 2s ease-in-out; /* Match the hero-content transition */
 }
-
 .hero-content-credits.visible {
   opacity: 1;
 }
-
 .hero-content-credits a {
   color: inherit;  /* same color as text */
   text-decoration: underline;
@@ -138,6 +165,7 @@ html, body, #root {
   outline: none;        /* optional: you can add custom focus styles */
 }
 
+/* PLANET CARDS */
 .planet-card {
   width: 30vw;
   height: 25vh;
@@ -151,7 +179,6 @@ html, body, #root {
   flex-direction: column;
   justify-content: center;
 }
-
 .close-button {
   position: absolute;
   top: 1rem;

@@ -54,6 +54,13 @@ const Hero = forwardRef((props, ref) => {
         <p>Click on one of the planets or buttons to explore my work</p>
       </div>
 
+      {/* Arrow + text tooltip */}
+      < div className={`ddh-tooltip ${showContent ? 'visible' : ''}`}>
+        <div className="arrow"></div>
+        <p>Click here to reset</p>
+      </div>
+
+      {/* credits for the 3d model - do not remove */}
       <p className={`hero-content-credits ${showContent ? 'visible' : ''}`}>
         "space boi" by{" "}
         <a href="https://skfb.ly/oyXLG" target="_blank" rel="noopener noreferrer">

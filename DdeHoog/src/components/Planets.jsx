@@ -1,7 +1,7 @@
 import { Html } from '@react-three/drei';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard }) => {
+const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard, cardContent }) => {
   return (
     <>
     <mesh position={[3.755, 4.28, 0]} label="experience" onClick={() => onPlanetClick("experience", [3.755, 4.28, 0])}>
@@ -25,8 +25,8 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
-                    <h2>Experience</h2>
-                    <p>My experience</p>
+                    {/* Swap in dynamic section content */}
+                    {cardContent()}
                 </motion.div>
             )}
             </AnimatePresence>
@@ -53,8 +53,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
-                    <h2>Portfolio</h2>
-                    <p>My work</p>
+                    {cardContent()}
                 </motion.div>
             )}
             </AnimatePresence>
@@ -77,8 +76,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard 
                     onClick={(e) => e.stopPropagation()}
                 >
                     <button className="close-button" onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
-                    <h2>Contact</h2>
-                    <p>Let's work together!</p>
+                    {cardContent()}
                 </motion.div>
             )}
             </AnimatePresence>

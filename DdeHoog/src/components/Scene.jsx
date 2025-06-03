@@ -4,6 +4,9 @@ import Spaceboi from "../../public/Spaceboi";
 import Planets from './Planets';
 import { Suspense, useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
+import Experience from './Experience';
+import Portfolio from './Portfolio';
+import Contact from './Contact';
 
 
 // This component wraps the 3D scene, manages camera transitions and UI state.
@@ -40,12 +43,25 @@ const Scene = ({
   // reset camera on DDH click
   useEffect(() => {
     if(shouldResetCamera && controlsRef.current) {
+      // Clear card state before lerping
+      setActivePlanetPosition(null); // Reset active planet position
+      sectionNameRef.current = null; // Reset section name
+      setActiveSection(null); // Reset active section
+      setShowCard(false); // Hide any open card
+      setCardOpen(false); // Reset card open state
+
+      // Start fade-in timer again
+      if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
+      fadeInTimeout.current = setTimeout(() => {
+        setShowContent(true);
+      }, 4000);
+
       // Set new goals (they’ll lerp toward this)
       targetLookAt.current.set(0, 3.5, 0);
       targetPosition.current.set(0, 5, 8);
 
+
       setShouldResetCamera(false); // reset the flag
-      //setShowContent(false); // hide UI during move
       setIsLerping(true); // set lerping state
     }
   }, [shouldResetCamera]);
@@ -80,37 +96,59 @@ const Scene = ({
 
   // Function to open a section and set camera position - on planetClick
   const openSection = (sectionName, planetPosition) => {
-    setShowCard(false); // hide and existing active card
-    sectionNameRef.current = sectionName; // Store the section name
-    //setActiveSection(sectionName);
-    setActivePlanetPosition(planetPosition);
-    
-    // Check if card is open or close
     const isOpen = sectionName !== null;
     setCardOpen(isOpen); // Update card open state
 
-    // Determine target position based on planet clicked
-    if (planetPosition) {
+    if (isOpen) {
+      //opening a card
+      setShowCard(false); // hide and existing active card
+      setShowCard(false); // hide any existing card
+      sectionNameRef.current = sectionName; // Store the section name
+      setActivePlanetPosition(planetPosition); // Set the active planet position
+
+      // Cancel any existing fade in timer
+      if  (fadeInTimeout.current) {
+        clearTimeout(fadeInTimeout.current);
+      }
+
+      // Determine target position based on planet clicked
       const offset = new THREE.Vector3(
         planetPosition[0] + 2,
         planetPosition[1] + 0,
         planetPosition[2] + 2,
       );
-      
       // Set lerp goals
       targetPosition.current.copy(offset);
       targetLookAt.current.set(...planetPosition);
-
-      // Closing card, restart fade in timer
-      if(!isOpen){
-        setShowContent(false); // hide hero-content on open card
-        if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
-        fadeInTimeout.current = setTimeout(() => {
-          setShowContent(true);
-        }, 4000); //standard 4 sec delay for fade in
-      }
       setIsLerping(true); // set lerping state
+    }else {
+    // Closing a card
+      sectionNameRef.current = null; // Reset section name
+      setActivePlanetPosition(null); // Reset active planet position
+      setActiveSection(null); // Reset active section
+      setShowCard(false); // Hide the card
+
+      // Restart fade in timer
+      if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
+      fadeInTimeout.current = setTimeout(() => {
+        setShowContent(true);
+      }, 4000); //standard 4 sec delay for fade in
+      
+      
     }   
+  };
+
+  const renderCardContent = () => {
+    switch (activeSection) {
+      case 'experience':
+        return <Experience />;
+      case 'portfolio':
+        return <Portfolio/>;
+      case 'contact':
+        return <Contact />;
+      default:
+        return null;
+    }
   };
 
   return (
@@ -126,11 +164,15 @@ const Scene = ({
           if (fadeInTimeout.current) {
             clearTimeout(fadeInTimeout.current);
           }
-          setShowContent(false);
+          if(!cardOpen) {
+            setShowContent(false);
+          }
         }}
         onEnd={() => {
-          if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
-          fadeInTimeout.current = setTimeout(() => setShowContent(true), 4000);
+          if(!cardOpen){
+            if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
+            fadeInTimeout.current = setTimeout(() => setShowContent(true), 4000);
+          }
         }}
       />
 
@@ -141,6 +183,7 @@ const Scene = ({
           activeSection={activeSection} 
           activePlanetPosition={activePlanetPosition} 
           showCard={showCard}
+          cardContent={renderCardContent}
         />
       </Suspense>
     </>

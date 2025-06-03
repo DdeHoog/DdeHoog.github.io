@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 .hero-container {
   width: 100vw;
   height: 100vh;
@@ -66,7 +68,7 @@ html, body, #root {
 .ddh-tooltip,
 .hover-tooltip{
   position: fixed;
-  top: 15px; /*Same vert as navbar*/
+  top: 26px; /*Same vert as navbar*/
   left: 110px; /* to the right off DDH, refine as needed */
   display: flex;
   align-items: center;
@@ -167,24 +169,35 @@ html, body, #root {
 
 /* PLANET CARDS */
 .planet-card {
-  width: 30vw;
-  height: 25vh;
-  background-color: white;
-  color: black;
+  width: 40vw;
+  
+  height: 40vh;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: white;
+  border: 1px solid white; /* White border for contrast */
   border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 0 30px rgba(0,0,0,0.3);
+  padding: 0.3rem;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Subtle glow effect */
   position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  /*overflow-y: auto; /* Allow scrolling if content overflows */
+  backdrop-filter: blur(4px); /* Blur background for depth */
 }
+
+@media (max-width: 768px) {
+  .planet-card {
+    width: 30vw; /* Full width on smaller screens */
+    height: 25vh; /* Adjust height to content */
+  }
+}
+
 .close-button {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: 0rem;
+  right: 0.1rem;
   background: transparent;
   border: none;
-  font-size: 2rem;
+  color: white;
+  font-size: 1rem;
   cursor: pointer;
 }

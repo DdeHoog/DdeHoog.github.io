@@ -53,7 +53,7 @@ const Experience = () => {
               key={exp.id}
               role="button"
               onClick={() => setSelectedId(exp.id)}
-              className={`text-xs truncate w-full overflow-hidden text-ellipsis whitespace-nowrap flex  items-center rounded-md p-1 transition-all duration-200 cursor-pointer
+              className={`text-xs w-full overflow-hidden flex  items-center rounded-md p-1 transition-all duration-200 cursor-pointer
                 ${
                   selectedId === exp.id
                     ? 'bg-gray-700 text-white font-semibold'

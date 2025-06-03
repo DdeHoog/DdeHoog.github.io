@@ -169,9 +169,8 @@ html, body, #root {
 
 /* PLANET CARDS */
 .planet-card {
-  width: 40vw;
-  
-  height: 40vh;
+  width: 35vw;
+  height: 35vh;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
   border: 1px solid white; /* White border for contrast */

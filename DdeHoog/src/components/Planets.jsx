@@ -11,7 +11,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
             <AnimatePresence>
             {activeSection === "experience" && showCard && (
                 <motion.div
-                    className="planet-card"
+                    className="planet-card-container"
                     initial={{ opacity: 0, scale: 0.5, y:20 }}
                     animate={{ opacity: 1, scale: 1, y:0 }}
                     exit={{ opacity: 0, scale: 0.5, y: 20}}
@@ -21,12 +21,14 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onClick={(e) => e.stopPropagation()}
                 >
                     <button 
-                    className="close-button" 
+                    className="planet-card-close" 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
                     {/* Swap in dynamic section content */}
-                    {cardContent()}
+                    <div className="planet-card-content h-full">
+                        {cardContent()}
+                    </div>
                 </motion.div>
             )}
             </AnimatePresence>
@@ -39,7 +41,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
             <AnimatePresence>
             {activeSection === "portfolio" && showCard && (
                 <motion.div 
-                    className="planet-card"
+                    className="planet-card-container"
                     initial={{ opacity: 0, scale: 0.5, y:20 }}
                     animate={{ opacity: 1, scale: 1, y:0 }}
                     exit={{ opacity: 0, scale: 0.5, y: 20}}
@@ -53,7 +55,9 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
-                    {cardContent()}
+                    <div className="planet-card-content">
+                        {cardContent()}
+                    </div>
                 </motion.div>
             )}
             </AnimatePresence>
@@ -66,7 +70,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
             <AnimatePresence>
             {activeSection === "contact" && showCard && (
                 <motion.div 
-                    className="planet-card"
+                    className="planet-card-container"
                     initial={{ opacity: 0, scale: 0.5, y:20 }}
                     animate={{ opacity: 1, scale: 1, y:0 }}
                     exit={{ opacity: 0, scale: 0.5, y: 20}}
@@ -76,7 +80,9 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onClick={(e) => e.stopPropagation()}
                 >
                     <button className="close-button" onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
-                    {cardContent()}
+                    <div className="planet-card-content">
+                        {cardContent()}
+                    </div>
                 </motion.div>
             )}
             </AnimatePresence>

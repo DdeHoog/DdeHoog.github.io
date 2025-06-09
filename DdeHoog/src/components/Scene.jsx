@@ -6,7 +6,7 @@ import { Suspense, useEffect, useState, useRef } from 'react';
 import * as THREE from 'three';
 import Experience from './Experience';
 import Portfolio from './Portfolio';
-import Contact from './Contact';
+import About from './About';
 
 
 // This component wraps the 3D scene, manages camera transitions and UI state.
@@ -144,8 +144,8 @@ const Scene = ({
         return <Experience />;
       case 'portfolio':
         return <Portfolio/>;
-      case 'contact':
-        return <Contact />;
+      case 'about':
+        return <About />;
       default:
         return null;
     }

@@ -202,8 +202,8 @@ html, body, #root {
 
 .planet-card-close {
   position: absolute;
-  top: 2px;
-  right: 8px;
+  top: 0px;
+  right: 11px;
   background: transparent;
   border: none;
   color: white;
@@ -269,8 +269,9 @@ html, body, #root {
 /* EXPERIENCE CONTENT*/
 /* Scrollbar styling */
 .custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: white transparent;
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
+  
 }
 
 /* WebKit (Chrome, Safari) */

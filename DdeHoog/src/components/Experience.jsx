@@ -31,7 +31,7 @@ const experiences = [
   },
   {
     id: 5,
-    name: "Creative startups",
+    name: "Startups",
     title: "Creative startups",
     duration: "Feb 2019 - June 2019",
     details: "Creating, developing and validating our own startup idea according to the lean startup methodology. Scrum master in a team of 5. Developing a startup idea, pivoting around key features ofthe idea using various experiments and validation methods"
@@ -80,19 +80,19 @@ const Experience = () => {
           {selectedExperience ? (
             <div className="w-full h-full break-words whitespace-pre-wrap overflow-y-auto p-1">{/*Right; div containing the elements */}
               {/*Right; title */}
-              <h2 className="text-[0.5rem] font-bold mb-2 break-words sm:text-[0.9rem] 2xl:text-base  md:text-base">
+              <h2 className="text-[0.5rem] font-bold mb-2 break-words sm:text-[0.8rem] 2xl:text-base  md:text-[0.9rem] md:text-base">
                 {selectedExperience.title}</h2>
 
               {/*Right; duration*/}
-              <p className="text-[0.4rem] sm:text-[0.6rem] md:text-[0.8rem] 2xl:text-base  text-gray-400 mb-2 ">
+              <p className="text-[0.4rem] sm:text-[0.6rem] md:text-[0.7rem] xl:text-base  text-gray-400 mb-2 ">
                 {selectedExperience.duration}</p>
 
               {/*Right; detail text*/}
-              <p className="text-[0.4rem] sm:text-[0.5rem] md:text-[0.7rem] 2xl:text-base whitespace-pre-wrap break-words">
+              <p className="text-[0.4rem] sm:text-[0.5rem] md:text-[0.6rem] xl:text-base whitespace-pre-wrap break-words">
                 {selectedExperience.details}</p>
             </div>
           ) : ( 
-            <p className="text-white-500 italic">Select an experience to see details</p>
+            <p className="text-white-500 italic"></p>
           )}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import './App.css'
-import { Contact, Experience, Hero, Portfolio, NavBar } from './components'
+import { About, Experience, Hero, Portfolio, NavBar } from './components'
 import { Suspense, useRef } from 'react';
 
 

@@ -19,6 +19,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onPointerDown={(e) => e.stopPropagation()} // prevent orbitControls through the card
                     onPointerUp={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
                     <button 
                     className="planet-card-close" 
@@ -49,13 +50,14 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onPointerDown={(e) => e.stopPropagation()} // prevent orbitControls through the card
                     onPointerUp={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
                     <button 
-                    className="close-button" 
+                    className="planet-card-close" 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
-                    <div className="planet-card-content">
+                    <div className="planet-card-content h-full">
                         {cardContent()}
                     </div>
                 </motion.div>
@@ -63,12 +65,12 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
             </AnimatePresence>
         </Html>
     </mesh>
-    <mesh position={[2, 5.67, -2.21]} label="contact" onClick={() => onPlanetClick("contact", [2, 5.67, -2.21])}>
+    <mesh position={[2, 5.67, -2.21]} label="about" onClick={() => onPlanetClick("about", [2, 5.67, -2.21])}>
         <sphereGeometry args={[0.4, 32, 32]} />
         <meshStandardMaterial color="pink" transparent opacity={0.5}/>
         <Html center distanceFactor={10} style={{ pointerEvents: 'auto'}}>
             <AnimatePresence>
-            {activeSection === "contact" && showCard && (
+            {activeSection === "about" && showCard && (
                 <motion.div 
                     className="planet-card-container"
                     initial={{ opacity: 0, scale: 0.5, y:20 }}
@@ -78,9 +80,10 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onPointerDown={(e) => e.stopPropagation()} // prevent orbitControls through the card
                     onPointerUp={(e) => e.stopPropagation()}
                     onClick={(e) => e.stopPropagation()}
+                    onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
-                    <button className="close-button" onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
-                    <div className="planet-card-content">
+                    <button className="planet-card-close" onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
+                    <div className="planet-card-content h-full">
                         {cardContent()}
                     </div>
                 </motion.div>

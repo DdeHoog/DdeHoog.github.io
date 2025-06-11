@@ -2,7 +2,7 @@ import { Canvas, useThree, useFrame, invalidate } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import Spaceboi from "../../public/Spaceboi";
 import Planets from './Planets';
-import { Suspense, useEffect, useState, useRef } from 'react';
+import { Suspense, useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
 import Experience from './Experience';
 import Portfolio from './Portfolio';
@@ -10,7 +10,7 @@ import About from './About';
 
 
 // This component wraps the 3D scene, manages camera transitions and UI state.
-const Scene = ({ 
+const Scene = forwardRef(({ // wrapped in forwardRef to be callable for navbar buttons
     activeSection, 
     setActiveSection, 
     fadeInTimeout, 
@@ -19,7 +19,9 @@ const Scene = ({
     setShouldResetCamera,
     cardOpen,
     setCardOpen  
-}) => {
+}, ref) => {
+
+
   const controlsRef = useRef(); // OrbitControls reference
   const sectionNameRef = useRef(null); // Reference to store the current section name
   const { camera } = useThree();
@@ -138,6 +140,10 @@ const Scene = ({
     }   
   };
 
+  useImperativeHandle(ref, () => ({
+    openSection
+  }));
+
   const renderCardContent = () => {
     switch (activeSection) {
       case 'experience':
@@ -188,6 +194,6 @@ const Scene = ({
       </Suspense>
     </>
   );
-}
+});
 
 export default Scene;

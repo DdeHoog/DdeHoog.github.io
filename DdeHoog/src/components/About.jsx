@@ -52,7 +52,7 @@ const About = () => {
           Github.com/DdeHoog
         </a>
         <a
-          href="www.linkedin.com/in/damian-de-hoog"
+          href="https://www.linkedin.com/in/damian-de-hoog"
           target="_blank"
           rel="noopener noreferrer"
           className="sm:flex flex-row items-center gap-1 hover:text-blue-300 transition-colors"

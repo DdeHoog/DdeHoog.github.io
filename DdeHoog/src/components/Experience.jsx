@@ -69,8 +69,8 @@ const Experience = () => {
                 className={`text-[0.4rem] sm:text-[0.6rem] md:text-[0.7rem] w-full overflow-hidden flex items-center rounded-md p-1 transition-all duration-200 cursor-pointer
                   ${
                     selectedId === exp.id
-                      ? 'bg-black text-white font-semibold border border-white' // Highlight selected experience
-                      : 'bg-white text-black font-semibold hover:bg-red-600 hover:text-white'}
+                      ? 'bg-white text-black font-semibold border border-black' // Highlight selected experience
+                      : 'bg-black text-white font-semibold border border-white hover:bg-gray-600 hover:text-white'}
                       `} // hover behavior
                 title={exp.title} // Tooltip for full title
               >

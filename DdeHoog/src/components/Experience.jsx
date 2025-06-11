@@ -46,8 +46,13 @@ const experiences = [
 ];
 
 const Experience = () => {
-  const [selectedId, setSelectedId] = useState(null);
-  const selectedExperience = experiences.find(exp => exp.id === selectedId);
+  const [selectedId, setSelectedId] = useState(null); // State to hold the ID of the currently selected experience
+  const selectedExperience = experiences.find(exp => exp.id === selectedId); // Find the full experience object based on the ID
+
+  const handleExperienceClick = (id) => {
+    // If clicked id already selected, set ID to null, otherwise set to clicked id
+    setSelectedId(prevId => (prevId === id ? null : id));
+  }
 
   return (
     <div className=" w-full h-full min-h-0 flex-col">
@@ -60,12 +65,12 @@ const Experience = () => {
               <div
                 key={exp.id}
                 role="button"
-                onClick={() => setSelectedId(exp.id)}
+                onClick={() => handleExperienceClick(exp.id)} // Use the new handler
                 className={`text-[0.4rem] sm:text-[0.6rem] md:text-[0.7rem] w-full overflow-hidden flex items-center rounded-md p-1 transition-all duration-200 cursor-pointer
                   ${
                     selectedId === exp.id
-                      ? 'bg-gray-700 text-white font-semibold' // Highlight selected experience
-                      : 'bg-gray-950 text-slate-300 hover:bg-gray-800'}
+                      ? 'bg-black text-white font-semibold border border-white' // Highlight selected experience
+                      : 'bg-white text-black font-semibold hover:bg-red-600 hover:text-white'}
                       `} // hover behavior
                 title={exp.title} // Tooltip for full title
               >
@@ -77,7 +82,7 @@ const Experience = () => {
       {/*Right; experience details*/}
       <div className="text-base h-full w-[65%] md:w-[65%] flex flex-col min-w-0 overflow-hidden"> {/* Details section block */ }
         <div className="bg-black h-full w-full p-0 rounded-md flex-1 min-h-0 overflow-auto">{/*Right; black background */}
-          {selectedExperience ? (
+          {selectedExperience ? ( // If an experience is selected, display its details
             <div className="w-full h-full break-words whitespace-pre-wrap overflow-y-auto p-1 custom-scrollbar">{/*Right; div containing the elements */}
               {/*Right; title */}
               <h2 className="text-[0.5rem] font-bold mb-2 break-words sm:text-[0.8rem] xl:text-[0.8] 2xl:text-lg  md:text-[0.9rem] md:text-base">
@@ -98,7 +103,10 @@ const Experience = () => {
               
             </div>
           ) : ( 
-            <p className="text-white-500 italic"></p>
+            // If no experience is selected, display the prompt
+            <p className="text-white text-center p-4 italic text-[0.6rem] sm:text-[0.8rem] md:text-[0.9rem] xl:text-base 2xl:text-lg">
+              Select an experience from the left to view its details.
+            </p>
           )}
         </div>
       </div>

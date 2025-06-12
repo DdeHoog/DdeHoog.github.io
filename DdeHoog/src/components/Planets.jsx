@@ -22,7 +22,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
                     <button 
-                    className="planet-card-close" 
+                    className="planet-card-close -mr-1.5 -mt-0.75 sm:mr-0 sm:mt-0" 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
@@ -53,7 +53,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
                     <button 
-                    className="planet-card-close" 
+                    className="planet-card-close -mr-1.5 -mt-0.75 sm:mr-0 sm:mt-0" 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>
@@ -82,7 +82,8 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onClick={(e) => e.stopPropagation()}
                     onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
-                    <button className="planet-card-close" onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
+                    <button className="planet-card-close -mr-1.5 -mt-0.75 sm:mr-0 sm:mt-0" 
+                    onClick={() =>onPlanetClick(null, activePlanetPosition)}>×</button>
                     <div className="planet-card-content h-full">
                         {cardContent()}
                     </div>

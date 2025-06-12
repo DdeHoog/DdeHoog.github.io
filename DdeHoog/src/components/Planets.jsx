@@ -22,7 +22,7 @@ const Planets = ({ onPlanetClick, activeSection, activePlanetPosition, showCard,
                     onWheel={(e) => e.stopPropagation()} // prevent scroll wheel zooming through the card
                 >
                     <button 
-                    className="planet-card-close -mr-1.5 -mt-0.75 sm:mr-0 sm:mt-0" 
+                    className="planet-card-close -mr-1.5 -mt-0.75 sm:mr-0 sm:mt-0 " 
                     onClick={() =>onPlanetClick(null, activePlanetPosition)}>
                         ×
                     </button>

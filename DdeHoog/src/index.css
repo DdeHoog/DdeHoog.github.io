@@ -271,7 +271,7 @@ html, body, #root {
 .custom-scrollbar {
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: rgba(255, 255, 255, 0.7) transparent;
-  
+  scroll-behavior: smooth;  
 }
 
 /* WebKit (Chrome, Safari) */

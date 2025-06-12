@@ -85,18 +85,18 @@ const Experience = () => {
           {selectedExperience ? ( // If an experience is selected, display its details
             <div className="w-full h-full break-words whitespace-pre-wrap overflow-y-auto p-1 custom-scrollbar">{/*Right; div containing the elements */}
               {/*Right; title */}
-              <h2 className="text-[0.5rem] font-bold mb-2 break-words sm:text-[0.8rem] xl:text-[0.8] 2xl:text-lg  md:text-[0.9rem] md:text-base">
+              <h2 className="text-[0.5rem] font-bold mb-2 break-words sm:text-[0.8rem] md:text-[0.9rem] xl:text-[0.8] 2xl:text-lg   ">
                 {selectedExperience.title}</h2>
 
               {/*Right; duration*/}
-              <p className="text-[0.4rem] sm:text-[0.55rem] md:text-[0.65rem]  xl:text-[0.8] 2xl:text-sm  text-gray-400 mb-2 ">
+              <p className="text-[0.4rem] sm:text-[0.55rem] md:text-[0.65rem]  xl:text-[0.8] 2xl:text-[0.7]  text-gray-400 mb-2 ">
                 {selectedExperience.duration}</p>
 
               {/*Right; detail text*/}
               {selectedExperience.details.split('\n\n').map((para, index) => (
                 <p 
                 key={index} 
-                className="text-[0.4rem] sm:text-[0.5rem] md:text-[0.6rem] xl:text-[0.8] 2xl:text-sm whitespace-pre-wrap break-words">
+                className="text-[0.4rem] sm:text-[0.5rem] md:text-[0.6rem] xl:text-[0.8] 2xl:text-[0.7rem] whitespace-pre-wrap break-words">
                   {para}
                 </p>
               ))}

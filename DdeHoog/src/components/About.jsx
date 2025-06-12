@@ -14,7 +14,7 @@ const About = () => {
           </h1>
           <img 
             src={profilePic}
-            alt="Image of Damian de Hoog"
+            alt="Damian"
             className="w-8 h-10 sm:w-13 sm:h-13 md:w-15 md:h-15 lg:w-17 lg:h-17 mr-4 md:mr-2 lg:mr-6 rounded-full object-cover border border-white"
           />
         </div>

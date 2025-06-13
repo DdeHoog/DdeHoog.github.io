@@ -8,7 +8,7 @@ import { Suspense, useEffect, useState, useRef, forwardRef, useImperativeHandle,
 
 
 // === Hero Component (wraps layout & Canvas) ===
-const Hero = forwardRef((props, ref) => {
+const Hero = forwardRef(({ onSetHeroContentVisible, props}, ref) => {
   const [showContent, setShowContent] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
   const fadeInTimeout = useRef(null);
@@ -35,9 +35,15 @@ const Hero = forwardRef((props, ref) => {
   }));
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowContent(true), 200);
+    const timer = setTimeout(() => {
+      setShowContent(true);
+      // call parents setter for navbar hide/show content
+      if (onSetHeroContentVisible) {
+        onSetHeroContentVisible(true);
+      }
+    }, 200);
     return () => clearTimeout(timer);
-  }, []);
+  }, [onSetHeroContentVisible]);
 
   return (
     <div id="hero" className="hero-container">
@@ -49,7 +55,12 @@ const Hero = forwardRef((props, ref) => {
           activePlanetPosition={activePlanetPosition}
           setActivePlanetPosition={setActivePlanetPosition}
           fadeInTimeout={fadeInTimeout}
-          setShowContent={setShowContent}
+          setShowContent={(val) => {
+            setShowContent(val);
+            if (onSetHeroContentVisible) {
+              onSetHeroContentVisible(val);
+            }
+          }}
           shouldResetCamera={shouldResetCamera}
           setShouldResetCamera={setShouldResetCamera}
           cardOpen={cardOpen}
@@ -61,12 +72,6 @@ const Hero = forwardRef((props, ref) => {
       <div className={`hero-content ${showContent ? 'visible' : ''}`}>
         <h1>Welcome to My Portfolio</h1>
         <p>Click on one of the planets or buttons to explore my work</p>
-      </div>
-
-      {/* Arrow + text tooltip */}
-      < div className={`ddh-tooltip ${showContent ? 'visible' : ''}`}>
-        <div className="arrow"></div>
-        <p>Click here to reset</p>
       </div>
 
       {/* credits for the 3d model - do not remove */}

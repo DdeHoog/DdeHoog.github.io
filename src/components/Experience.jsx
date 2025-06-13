@@ -66,7 +66,7 @@ const Experience = () => {
                 key={exp.id}
                 role="button"
                 onClick={() => handleExperienceClick(exp.id)} // Use the new handler
-                className={`text-wrap text-[0.28rem] sm:text-[0.5rem] md:text-[0.7rem] w-full overflow-hidden flex items-center rounded-md p-1 transition-all duration-200 cursor-pointer
+                className={`text-wrap text-[0.28rem] sm:text-[0.5rem] md:text-[0.7rem] w-full overflow-hidden flex items-center rounded-md p-0.5 sm:p-1 transition-all duration-200 cursor-pointer
                   ${
                     selectedId === exp.id
                       ? 'bg-white text-black font-semibold border border-black' // Highlight selected experience
@@ -104,9 +104,11 @@ const Experience = () => {
             </div>
           ) : ( 
             // If no experience is selected, display the prompt
-            <p className="text-white  align-middle p-4 italic text-[0.6rem] sm:text-[0.8rem] md:text-[0.9rem] xl:text-base 2xl:text-lg">
-              Select an experience from the left to view its details.
-            </p>
+            <div className="flex items-center justify-center h-full w-full">
+              <p className="text-white text-center align-middle p-4 italic text-[0.6rem] sm:text-[0.8rem] md:text-[0.9rem] xl:text-base 2xl:text-lg">
+                Select an experience from the left to view its details.
+              </p>
+            </div>
           )}
         </div>
       </div>

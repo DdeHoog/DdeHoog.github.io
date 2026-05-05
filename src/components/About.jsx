@@ -36,11 +36,11 @@ const About = () => {
         {/* Bottom row: Contact icons */}
         <div className="flex justify-center gap-0.75 md:gap-4 items-center pt-0 sm:pt-1  text-[0.3rem] sm:text-[0.35rem] md:text-[0.4rem]">
         <a
-          href="mailto:DdeHoog@gmail.com"
+          href="mailto:Damian190085@gmail.com"
           className="sm:flex flex-row items-center gap-1 hover:text-blue-300 transition-colors"
         >
           <FaEnvelope />
-          <span className="block sm:inline">DdeHoog@<wbr />gmail.com</span>
+          <span className="block sm:inline">Damian190085<wbr />@gmail.com</span>
         </a>
         <a
           href="https://github.com/DdeHoog"

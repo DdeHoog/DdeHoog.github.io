@@ -1,4 +1,3 @@
-import './App.css'
 import { About, Experience, Hero, Portfolio, NavBar } from './components'
 import { Suspense, useRef, useState } from 'react';
 

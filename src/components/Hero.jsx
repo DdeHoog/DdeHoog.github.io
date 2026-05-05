@@ -1,35 +1,28 @@
-import { Canvas, useThree, useFrame} from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
-import Spaceboi from "../../public/Spaceboi";
-import Planets from './Planets';
+import { Canvas } from '@react-three/fiber';
 import Scene from './Scene';
-import { Suspense, useEffect, useState, useRef, forwardRef, useImperativeHandle, use } from 'react';
+import CardOverlay from './CardOverlay';
+import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 
 
 
 // === Hero Component (wraps layout & Canvas) ===
-const Hero = forwardRef(({ onSetHeroContentVisible, props}, ref) => {
+const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
   const [showContent, setShowContent] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
-  const fadeInTimeout = useRef(null);
   const [activePlanetPosition, setActivePlanetPosition] = useState(null);
   const [shouldResetCamera, setShouldResetCamera] = useState(false);
-  const [cardOpen, setCardOpen] = useState(false); // manages html card open for hiding content
+  const [cardOpen, setCardOpen] = useState(false); // gates whether OrbitControls onStart hides hero text
+  const [showCard, setShowCard] = useState(false); // toggled by Scene once camera lerp arrives
   const sceneRef = useRef(null); // Reference to the Scene component for navbar buttons
 
-  // Expose resetCamera method to parent components
-  // This allows parent components to reset the camera when needed
-  // This is useful for resetting the camera when the user clicks on the DDH logo
   useImperativeHandle(ref, () => ({
     resetCamera: () => {
-      setShouldResetCamera(true); //  set a flag to indicate camera reset
+      setShouldResetCamera(true);
       setActiveSection(null);
-      }, 
+    },
     navigateToSection: (sectionName, position) => {
-      // Checks if ref is connected then calls function on Scene component
       if (sceneRef.current) {
-        sceneRef.current.openSection(sectionName, position);//calls opensection
-        //Sets the new active section based on the name and position.
+        sceneRef.current.openSection(sectionName, position);
       }
     }
   }));
@@ -37,7 +30,6 @@ const Hero = forwardRef(({ onSetHeroContentVisible, props}, ref) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true);
-      // call parents setter for navbar hide/show content
       if (onSetHeroContentVisible) {
         onSetHeroContentVisible(true);
       }
@@ -45,16 +37,23 @@ const Hero = forwardRef(({ onSetHeroContentVisible, props}, ref) => {
     return () => clearTimeout(timer);
   }, [onSetHeroContentVisible]);
 
+  const handleCloseCard = () => {
+    if (sceneRef.current) {
+      sceneRef.current.openSection(null, null);
+    }
+  };
+
   return (
     <div id="hero" className="hero-container">
       <Canvas className="hero-canvas">
         <Scene
-          ref={sceneRef} // Pass the ref to Scene component
+          ref={sceneRef}
           activeSection={activeSection}
           setActiveSection={setActiveSection}
           activePlanetPosition={activePlanetPosition}
           setActivePlanetPosition={setActivePlanetPosition}
-          fadeInTimeout={fadeInTimeout}
+          showCard={showCard}
+          setShowCard={setShowCard}
           setShowContent={(val) => {
             setShowContent(val);
             if (onSetHeroContentVisible) {
@@ -68,17 +67,23 @@ const Hero = forwardRef(({ onSetHeroContentVisible, props}, ref) => {
         />
       </Canvas>
 
-      {/* Overlay content */}
+      <CardOverlay
+        activeSection={activeSection}
+        showCard={showCard}
+        onClose={handleCloseCard}
+      />
+
+      {/* Welcome overlay */}
       <div className={`hero-content ${showContent ? 'visible' : ''}`}>
         <h1>Welcome to My Portfolio</h1>
         <p>Click on one of the planets or buttons to explore my work</p>
       </div>
 
-      {/* credits for the 3d model - do not remove */}
+      {/* credits for the 3d model - do not remove (CC-BY-NC license) */}
       <p className={`hero-content-credits ${showContent ? 'visible' : ''}`}>
         "space boi" by{" "}
         <a href="https://skfb.ly/oyXLG" target="_blank" rel="noopener noreferrer">
-          silvercrow101  
+          silvercrow101
         </a>{" "}
         is licensed under Creative Commons Attribution-NonCommercial license.
       </p>

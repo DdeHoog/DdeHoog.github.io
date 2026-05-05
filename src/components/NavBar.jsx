@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { SECTIONS } from '../scene/sections';
 
 const NavBar = ({ onLogoClick, onPlanetClick, showTooltipOnHeroContentVisible }) => {
 
@@ -31,32 +32,18 @@ const NavBar = ({ onLogoClick, onPlanetClick, showTooltipOnHeroContentVisible })
             </div>
 
 
-            <ul 
+            <ul
                 className="sm:flex gap-4 mt-4 -mr-2 sm:mr-0 sm:mt-4">
-                    <li>
-                    <button 
-                        onClick={() => onPlanetClick("portfolio", [-3.42, 4.605, -1.17])}
-                        className="text-orange-300 hover:text-orange-400"
-                    >
-                        Portfolio
-                    </button>
-                    </li>
-                    <li>
-                        <button 
-                        onClick={() => onPlanetClick("experience", [3.755, 4.28, 0])}
-                        className="text-blue-300 hover:text-blue-400"
-                        >
-                        Experience
-                        </button>
-                    </li>
-                    <li>
-                        <button 
-                        onClick={() => onPlanetClick("about", [2, 5.67, -2.21])}
-                        className="text-pink-300 hover:text-pink-400"
-                        >
-                        About
-                        </button>
-                    </li>
+                    {SECTIONS.map((section) => (
+                        <li key={section.id}>
+                            <button
+                                onClick={() => onPlanetClick(section.id, section.position)}
+                                className={section.navColor}
+                            >
+                                {section.navLabel}
+                            </button>
+                        </li>
+                    ))}
                 </ul>
         </nav>
     );

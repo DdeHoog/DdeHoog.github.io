@@ -1,40 +1,39 @@
-import { Canvas, useThree, useFrame, invalidate } from '@react-three/fiber';
+import { useThree, useFrame, invalidate } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import Spaceboi from "../../public/Spaceboi";
+import Spaceboi from "./Spaceboi";
 import Planets from './Planets';
 import { Suspense, useEffect, useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import * as THREE from 'three';
-import Experience from './Experience';
-import Portfolio from './Portfolio';
-import About from './About';
+import { HOME_CAMERA, SECTIONS } from '../scene/sections';
+import { ANCHORS } from '../scene/anchors';
 
 
-// This component wraps the 3D scene, manages camera transitions and UI state.
-const Scene = forwardRef(({ // wrapped in forwardRef to be callable for navbar buttons
-    activeSection, 
-    setActiveSection, 
-    fadeInTimeout, 
-    setShowContent, 
+// Manages camera transitions and scene state. Card rendering lives in <CardOverlay>
+// outside the Canvas (see Hero.jsx).
+const Scene = forwardRef(({
+    activeSection,
+    setActiveSection,
+    activePlanetPosition,
+    setActivePlanetPosition,
+    showCard,
+    setShowCard,
+    setShowContent,
     shouldResetCamera,
     setShouldResetCamera,
     cardOpen,
-    setCardOpen  
+    setCardOpen
 }, ref) => {
 
+  const controlsRef = useRef();
+  const sectionNameRef = useRef(null);
+  const fadeInTimeout = useRef(null);
+  const { camera, size } = useThree();
+  const [isLerping, setIsLerping] = useState(false);
 
-  const controlsRef = useRef(); // OrbitControls reference
-  const sectionNameRef = useRef(null); // Reference to store the current section name
-  const { camera } = useThree();
-  const [activePlanetPosition, setActivePlanetPosition] = useState(null);
-  const [isLerping, setIsLerping] = useState(false); // Controls camera animation state
-  const [showCard, setShowCard] = useState(false); // Controls visibility of planet cards
+  const targetPosition = useRef(new THREE.Vector3(...HOME_CAMERA.position));
+  const targetLookAt = useRef(new THREE.Vector3(...HOME_CAMERA.lookAt));
+  const projectionScratch = useRef(new THREE.Vector3());
 
-  // Target camera position and lookAt point
-  const targetPosition = useRef(new THREE.Vector3(0, 5, 8));
-  const targetLookAt = useRef(new THREE.Vector3(0, 3.5, 0));
-  
-
-  // Expose initial camera state
   useEffect(() => {
     if (controlsRef.current) {
       controlsRef.current.target.copy(targetLookAt.current);
@@ -42,120 +41,97 @@ const Scene = forwardRef(({ // wrapped in forwardRef to be callable for navbar b
     }
   }, []);
 
-  // reset camera on DDH click
   useEffect(() => {
-    if(shouldResetCamera && controlsRef.current) {
-      // Clear card state before lerping
-      setActivePlanetPosition(null); // Reset active planet position
-      sectionNameRef.current = null; // Reset section name
-      setActiveSection(null); // Reset active section
-      setShowCard(false); // Hide any open card
-      setCardOpen(false); // Reset card open state
+    if (shouldResetCamera && controlsRef.current) {
+      setActivePlanetPosition(null);
+      sectionNameRef.current = null;
+      setActiveSection(null);
+      setShowCard(false);
+      setCardOpen(false);
 
-      // Start fade-in timer again
       if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
       fadeInTimeout.current = setTimeout(() => {
         setShowContent(true);
       }, 4000);
 
-      // Set new goals (they’ll lerp toward this)
-      targetLookAt.current.set(0, 3.5, 0);
-      targetPosition.current.set(0, 5, 8);
+      targetLookAt.current.set(...HOME_CAMERA.lookAt);
+      targetPosition.current.set(...HOME_CAMERA.position);
 
-
-      setShouldResetCamera(false); // reset the flag
-      setIsLerping(true); // set lerping state
+      setShouldResetCamera(false);
+      setIsLerping(true);
     }
   }, [shouldResetCamera]);
 
-  // LERP camera every frame
   useFrame(() => {
-    if(!controlsRef.current) return; // ??
+    // Project every section's world position to screen pixels and write to its
+    // anchor MotionValues. CardOverlay reads these to keep each card visually
+    // pinned to its planet while the camera moves.
+    for (const s of SECTIONS) {
+      projectionScratch.current.set(...s.position).project(camera);
+      ANCHORS[s.id].x.set((projectionScratch.current.x * 0.5 + 0.5) * size.width);
+      ANCHORS[s.id].y.set((projectionScratch.current.y * -0.5 + 0.5) * size.height);
+    }
 
-    // Smoothly approach the target
-    if (isLerping){
+    if (!controlsRef.current) return;
+
+    if (isLerping) {
       camera.position.lerp(targetPosition.current, 0.1);
       controlsRef.current.target.lerp(targetLookAt.current, 0.1);
       controlsRef.current.update();
 
-      // Close to target check, if close enough, snap to target
       const distance = camera.position.distanceTo(targetPosition.current);
       if (distance < 0.01) {
         camera.position.copy(targetPosition.current);
         controlsRef.current.target.copy(targetLookAt.current);
         controlsRef.current.update();
 
-        setIsLerping(false); // stop lerping
+        setIsLerping(false);
 
-        if(activePlanetPosition){
-          setActiveSection(sectionNameRef.current);// now finally show the card
-          setShowCard(true); // show the card
+        if (activePlanetPosition) {
+          setActiveSection(sectionNameRef.current);
+          setShowCard(true);
         }
       }
-    invalidate(); // triggers a render frame
+      invalidate();
     }
   });
 
-  // Function to open a section and set camera position - on planetClick
   const openSection = (sectionName, planetPosition) => {
     const isOpen = sectionName !== null;
-    setCardOpen(isOpen); // Update card open state
+    setCardOpen(isOpen);
 
     if (isOpen) {
-      //opening a card
-      setShowCard(false); // hide and existing active card
-      setShowCard(false); // hide any existing card
-      sectionNameRef.current = sectionName; // Store the section name
-      setActivePlanetPosition(planetPosition); // Set the active planet position
+      setShowCard(false);
+      setShowContent(false);
+      sectionNameRef.current = sectionName;
+      setActivePlanetPosition(planetPosition);
 
-      // Cancel any existing fade in timer
-      if  (fadeInTimeout.current) {
-        clearTimeout(fadeInTimeout.current);
-      }
+      if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
 
-      // Determine target position based on planet clicked
       const offset = new THREE.Vector3(
         planetPosition[0] + 2,
         planetPosition[1] + 0,
         planetPosition[2] + 2,
       );
-      // Set lerp goals
       targetPosition.current.copy(offset);
       targetLookAt.current.set(...planetPosition);
-      setIsLerping(true); // set lerping state
-    }else {
-    // Closing a card
-      sectionNameRef.current = null; // Reset section name
-      setActivePlanetPosition(null); // Reset active planet position
-      setActiveSection(null); // Reset active section
-      setShowCard(false); // Hide the card
+      setIsLerping(true);
+    } else {
+      sectionNameRef.current = null;
+      setActivePlanetPosition(null);
+      setActiveSection(null);
+      setShowCard(false);
 
-      // Restart fade in timer
       if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
       fadeInTimeout.current = setTimeout(() => {
         setShowContent(true);
-      }, 4000); //standard 4 sec delay for fade in
-      
-      
-    }   
+      }, 4000);
+    }
   };
 
   useImperativeHandle(ref, () => ({
     openSection
   }));
-
-  const renderCardContent = () => {
-    switch (activeSection) {
-      case 'experience':
-        return <Experience />;
-      case 'portfolio':
-        return <Portfolio/>;
-      case 'about':
-        return <About />;
-      default:
-        return null;
-    }
-  };
 
   return (
     <>
@@ -170,12 +146,12 @@ const Scene = forwardRef(({ // wrapped in forwardRef to be callable for navbar b
           if (fadeInTimeout.current) {
             clearTimeout(fadeInTimeout.current);
           }
-          if(!cardOpen) {
+          if (!cardOpen) {
             setShowContent(false);
           }
         }}
         onEnd={() => {
-          if(!cardOpen){
+          if (!cardOpen) {
             if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
             fadeInTimeout.current = setTimeout(() => setShowContent(true), 4000);
           }
@@ -184,13 +160,7 @@ const Scene = forwardRef(({ // wrapped in forwardRef to be callable for navbar b
 
       <Suspense fallback={null}>
         <Spaceboi />
-        <Planets 
-          onPlanetClick={openSection} 
-          activeSection={activeSection} 
-          activePlanetPosition={activePlanetPosition} 
-          showCard={showCard}
-          cardContent={renderCardContent}
-        />
+        <Planets onPlanetClick={openSection} />
       </Suspense>
     </>
   );

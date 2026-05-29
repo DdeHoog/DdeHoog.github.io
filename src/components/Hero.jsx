@@ -86,7 +86,7 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
 
       {/* Welcome overlay */}
       <div className={`hero-content ${showContent ? 'visible' : ''}`}>
-        <h1>Welcome to My Portfolio</h1>
+        <h1 className="font-display tracking-wide">Welcome to My Portfolio</h1>
         <p>Click on one of the planets or buttons to explore my work</p>
       </div>
 

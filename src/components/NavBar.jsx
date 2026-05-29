@@ -4,9 +4,9 @@ import { SECTIONS } from '../scene/sections';
 const NavBar = ({ onLogoClick, onPlanetClick, showTooltipOnHeroContentVisible }) => {
 
     return (
-        <nav 
-            className="fixed top-0 left-0 w-full h-[60px] bg-black/70 flex justify-between px-4 md:px-8 
-                        items-center text-white font-bold z-10 box-border font-sans"
+        <nav
+            className="fixed top-0 left-0 w-full h-[60px] bg-black/70 flex justify-between px-4 md:px-8
+                        items-center text-white font-bold z-10 box-border font-display"
         >
             <div className="group relative flex items-center">
                 <a 

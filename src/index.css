@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* ─── Design tokens ────────────────────────────────────────────────────────
+   `@theme` registers tokens; Tailwind v4 auto-generates utilities from them.
+   `--font-display` ⇒ `font-display` utility. Swap the family here to change
+   every header at once. Space Grotesk is a geometric sans-serif that pairs
+   nicely with the cosmic theme without falling into starship-dashboard
+   territory. Falls back to the system sans stack while the web font loads. */
+@theme {
+  --font-display: "Space Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
 /* ─── Fluid, card-aware type ───────────────────────────────────────────────
    Font sizes that scale with the CARD's width, not the viewport. The card sets
    `@container` (see CardOverlay.jsx), so `cqi` = 1% of the card's content width.

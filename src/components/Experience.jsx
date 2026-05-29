@@ -104,7 +104,7 @@ const TabButton = ({ active, onClick, children }) => (
     aria-pressed={active}
     className={`
       flex-1 px-2 py-1
-      ftext-base
+      ftext-base font-display
       font-semibold tracking-wide uppercase
       border-b-2 transition-colors duration-150
       ${active
@@ -159,7 +159,7 @@ const Experience = () => {
         <div className="flex-1 min-w-0 h-full bg-black/60 rounded-md p-1.5 sm:p-2 overflow-hidden flex flex-col">
           {selected ? (
             <div className="w-full h-full overflow-y-auto custom-scrollbar pr-1">
-              <h2 className="ftext-lg font-bold mb-1 break-words">
+              <h2 className="ftext-lg font-display font-bold tracking-wide mb-1 break-words">
                 {selected.title}
               </h2>
               <p className="ftext-sm text-white/60 mb-1 sm:mb-2">

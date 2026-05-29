@@ -9,9 +9,9 @@ const About = () => {
     <div id="about" className="section w-full h-full flex flex-col text-white p-1 md:p-2 overflow-y-auto custom-scrollbar">
         {/* Top row: Name and profile image */}
         <div className="flex justify-between items-center">
-          <h1 className="ftext-2xl font-bold ml-2 sm:ml-4 lg:ml-6">
+          <h1 className="ftext-2xl font-display font-bold tracking-wide ml-2 sm:ml-4 lg:ml-6">
             Damian <br />
-            <span className="ftext-xl font-bold">
+            <span className="ftext-xl font-display font-bold tracking-wide">
               de Hoog <br />
             </span>
           </h1>

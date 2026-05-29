@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+/* ─── Fluid, card-aware type ───────────────────────────────────────────────
+   Font sizes that scale with the CARD's width, not the viewport. The card sets
+   `@container` (see CardOverlay.jsx), so `cqi` = 1% of the card's content width.
+   Each clamp(min, N·cqi, max) keeps text readable on a small phone-sized card
+   and comfortable on a wide desktop card, scaling smoothly in between — no
+   breakpoints. Tune min / coefficient / max to taste. */
+@utility ftext-xs   { font-size: clamp(0.6rem,  2.2cqi, 0.95rem); }
+@utility ftext-sm   { font-size: clamp(0.72rem, 2.6cqi, 1.05rem); }
+@utility ftext-base { font-size: clamp(0.8rem,  3.0cqi, 1.2rem);  }
+@utility ftext-lg   { font-size: clamp(0.95rem, 3.6cqi, 1.45rem); }
+@utility ftext-xl   { font-size: clamp(1.1rem,  4.6cqi, 1.95rem); }
+@utility ftext-2xl  { font-size: clamp(1.3rem,  5.4cqi, 2.3rem);  }
+
 .hero-container {
   width: 100vw;
   height: 100vh;

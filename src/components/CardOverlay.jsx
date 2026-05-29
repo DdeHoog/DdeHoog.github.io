@@ -42,9 +42,10 @@ const CardOverlay = ({ activeSection, showCard, onClose }) => {
             <div style={{ transform: 'translate(-50%, -50%)' }}>
               <motion.div
                 className="
+                  @container
                   relative pointer-events-auto flex flex-col text-white
-                  w-[90vw] max-w-[640px]
-                  h-[70vh] max-h-[480px]
+                  w-[90vw] max-w-[720px]
+                  h-[75vh] max-h-[540px]
                   bg-black/80 backdrop-blur-md
                   border border-white rounded-xl
                   p-2 sm:p-3
@@ -55,8 +56,10 @@ const CardOverlay = ({ activeSection, showCard, onClose }) => {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.5, y: 20 }}
                 transition={{ type: 'spring', stiffness: 50, damping: 15 }}
-                onPointerDown={(e) => e.stopPropagation()}
-                onPointerUp={(e) => e.stopPropagation()}
+                // NOTE: do NOT stopPropagation on pointerdown/pointerup here.
+                // three's OrbitControls listens for pointerup on `document`; if the
+                // card swallows it, a camera drag released over the card never ends
+                // and the camera keeps rotating. onClick/onWheel are safe to stop.
                 onClick={(e) => e.stopPropagation()}
                 onWheel={(e) => e.stopPropagation()}
               >

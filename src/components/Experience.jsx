@@ -104,7 +104,7 @@ const TabButton = ({ active, onClick, children }) => (
     aria-pressed={active}
     className={`
       flex-1 px-2 py-1
-      text-[0.6rem] sm:text-[0.75rem] md:text-[0.85rem]
+      ftext-base
       font-semibold tracking-wide uppercase
       border-b-2 transition-colors duration-150
       ${active
@@ -159,16 +159,16 @@ const Experience = () => {
         <div className="flex-1 min-w-0 h-full bg-black/60 rounded-md p-1.5 sm:p-2 overflow-hidden flex flex-col">
           {selected ? (
             <div className="w-full h-full overflow-y-auto custom-scrollbar pr-1">
-              <h2 className="text-[0.65rem] sm:text-[0.85rem] md:text-base font-bold mb-1 break-words">
+              <h2 className="ftext-lg font-bold mb-1 break-words">
                 {selected.title}
               </h2>
-              <p className="text-[0.55rem] sm:text-[0.7rem] md:text-[0.8rem] text-white/60 mb-1 sm:mb-2">
+              <p className="ftext-sm text-white/60 mb-1 sm:mb-2">
                 {selected.duration}
               </p>
               {selected.details.split('\n\n').map((para, idx) => (
                 <p
                   key={idx}
-                  className="text-[0.55rem] sm:text-[0.7rem] md:text-[0.8rem] mb-1 sm:mb-1.5 break-words whitespace-pre-wrap leading-snug"
+                  className="ftext-sm mb-1 sm:mb-1.5 break-words whitespace-pre-wrap leading-snug"
                 >
                   {para}
                 </p>
@@ -176,7 +176,7 @@ const Experience = () => {
             </div>
           ) : (
             <div className="flex items-center justify-center h-full w-full">
-              <p className="italic text-white/60 text-[0.7rem] sm:text-[0.85rem]">
+              <p className="italic text-white/60 ftext-base">
                 Select an item to view details.
               </p>
             </div>

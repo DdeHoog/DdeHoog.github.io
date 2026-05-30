@@ -1,83 +1,63 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { FaExternalLinkAlt, FaGithub } from 'react-icons/fa';
+import portfolioShot from '../assets/Portfolio.png';
+import bitCrabBeat from '../assets/bitCrabBeat.png';
+import feitengHome from '../assets/FeitengEU.jpg';
+import feitengDownload from '../assets/FeitengDownload.jpg';
 
-// ── Placeholder projects ─────────────────────────────────────────────────────
-// Drop real data in here. Shape:
-//   id        — stable key
-//   title     — short headline
-//   blurb     — one-liner shown on the carousel card
-//   description — longer body shown in the expanded modal
-//   tech      — array of short tag strings
-//   gradient  — Tailwind gradient classes for the placeholder hero swatch
-//               (delete and replace with `image: importedImage` when you wire
-//               real screenshots — and then render <img src={project.image}>
-//               in place of the gradient div)
-//   links     — optional { demo, github } URLs
 const projects = [
   {
-    id: 'p1',
-    title: 'Project Alpha',
-    blurb: 'Short one-liner describing what this project does.',
+    id: 'portfolio',
+    title: 'This Portfolio',
+    blurb: "The site you're on — one fullscreen 3D scene you explore by flying to planets.",
     description:
-      'Longer description placeholder. Covers what the project is, what problem it solves, the technical approach, and any noteworthy outcomes. This is what shows up in the expanded modal.',
-    tech: ['React', 'TypeScript', 'Tailwind'],
-    gradient: 'from-blue-500 via-indigo-500 to-purple-600',
-    links: { demo: '#', github: '#' },
+      "This portfolio is built as a single continuous WebGL scene rather than a set of pages: a statue floats in space surrounded by planets, and clicking one flies the camera in and opens a content card. The idea was for the portfolio to be an experience in itself — a bit of creative exploration that leans into the cosmic theme instead of another scrolling page.\n\nIt runs on React and Vite, with the 3D scene built on Three.js via react-three-fiber and drei, animated with Framer Motion, and styled with Tailwind CSS.\n\nThe interesting challenges were mostly about feel and performance: keeping a static 3D scene at near-zero idle cost with on-demand rendering, tuning the camera flights so they ease naturally rather than snapping, pinning the HTML cards to each planet's projected screen position every frame, and sizing card content to the card itself with CSS container queries instead of viewport breakpoints.",
+    tech: ['React', 'Vite', 'Three.js', 'react-three-fiber', 'Framer Motion', 'Tailwind CSS'],
+    image: portfolioShot,
+    gradient: 'from-indigo-500 via-purple-500 to-fuchsia-600',
+    links: { github: 'https://github.com/DdeHoog/DdeHoog.github.io' },
   },
   {
-    id: 'p2',
-    title: 'Project Beta',
-    blurb: 'Another one-liner about another placeholder project.',
-    description: 'Longer description placeholder. Replace with real project details.',
-    tech: ['Python', 'FastAPI', 'PostgreSQL'],
-    gradient: 'from-orange-400 via-rose-500 to-red-600',
-    links: { demo: '#', github: '#' },
+    id: 'bit-crab-beat',
+    title: 'Bit Crab Beat',
+    blurb: 'A rhythm game built with friends in a weekend game jam — my first Godot project.',
+    description:
+      "Bit Crab Beat is a rhythm game where you keep a little crab moving in time with the music. It was made by a small team of friends during BitJam, an itch.io game jam, and it was my first time building anything in Godot.\n\nAs programmer and designer I focused on the core beat system — a conductor that syncs gameplay events to the music track — along with input timing, obstacle spawning and player movement.\n\nWorking to a jam deadline meant scoping tightly, splitting work across the team, and getting a playable loop shipped fast. It's free to play in the browser on itch.io.",
+    tech: ['Godot 4', 'GDScript', 'Game Jam'],
+    image: bitCrabBeat,
+    links: {
+      demo: 'https://shironin.itch.io/bit-crab-beats',
+      demoLabel: 'Play on itch.io',
+      github: 'https://github.com/DdeHoog/bit-crab-beat',
+    },
   },
   {
-    id: 'p3',
-    title: 'Project Gamma',
-    blurb: 'Yet another placeholder blurb to fill the carousel.',
-    description: 'Longer description placeholder. Replace with real project details.',
-    tech: ['Three.js', 'WebGL', 'GLSL'],
-    gradient: 'from-pink-400 via-fuchsia-500 to-purple-600',
-    links: { demo: '#', github: '#' },
-  },
-  {
-    id: 'p4',
-    title: 'Project Delta',
-    blurb: 'And another, so the carousel has room to scroll.',
-    description: 'Longer description placeholder. Replace with real project details.',
-    tech: ['Go', 'Docker', 'Kubernetes'],
-    gradient: 'from-emerald-400 via-teal-500 to-cyan-600',
-    links: { demo: '#', github: '#' },
-  },
-  {
-    id: 'p5',
-    title: 'Project Epsilon',
-    blurb: 'Last placeholder for the skeleton.',
-    description: 'Longer description placeholder. Replace with real project details.',
-    tech: ['Rust', 'WebAssembly'],
-    gradient: 'from-amber-300 via-yellow-500 to-orange-500',
-    links: { demo: '#', github: '#' },
+    id: 'feiteng',
+    title: 'Feiteng EU — Client Portal',
+    blurb: 'A full-stack portal where Feiteng EU customers log in to check stock and download manuals.',
+    description:
+      "Feiteng EU is a web application I build and maintain as solo full-stack developer for the client Feiteng. It gives their customers a secure login to check live stock and download product manuals and documentation.\n\nThe frontend is a React single-page app (React Router, Axios, Tailwind), and the backend is a Node/Express API with JWT-based authentication, rate limiting and Helmet for hardening, plus structured logging — all organised as an npm-workspaces monorepo.\n\nIt's live in production at feitengacp.eu.",
+    tech: ['React', 'Node.js', 'Express', 'JWT Auth', 'Tailwind CSS'],
+    image: feitengHome,
+    images: [feitengDownload],
+    links: { demo: 'https://www.feitengacp.eu', demoLabel: 'Visit site' },
   },
 ];
 
-// Drag-distance threshold (px) above which a pointer gesture is committed to
-// a drag-to-scroll instead of a tap/click on a card.
+// Drag past this many px commits the gesture to a scroll instead of a click.
 const DRAG_THRESHOLD_PX = 5;
 
-// ── One carousel card ────────────────────────────────────────────────────────
 const ProjectCard = ({ project, isFocused, onActivate, registerRef }) => {
   return (
     <button
       ref={registerRef}
       type="button"
       onClick={onActivate}
-      aria-label={`Open details for ${project.title}`}
+      aria-label={isFocused ? `Open details for ${project.title}` : `Bring ${project.title} to center`}
       className={`
         shrink-0 snap-center
-        w-[55cqi] max-w-[420px] min-w-[180px] h-full
+        w-[55cqi] max-w-[500px] min-w-[180px] h-full
         rounded-xl border overflow-hidden
         flex flex-col text-left
         bg-black/40
@@ -87,11 +67,13 @@ const ProjectCard = ({ project, isFocused, onActivate, registerRef }) => {
           : 'border-white/30 opacity-70 scale-[0.94]'}
       `}
     >
-      {/* Placeholder hero — gradient swatch (replace with <img> when you have screenshots) */}
-      <div className={`relative w-full h-[55%] shrink-0 bg-gradient-to-br ${project.gradient} flex items-center justify-center`}>
-        <span className="ftext-base font-display tracking-wide text-white/70 px-2 text-center">
-          (placeholder image)
-        </span>
+      <div className="relative w-full h-[55%] shrink-0 overflow-hidden bg-black/40">
+        {project.image ? (
+          // draggable=false so dragging the image doesn't fight drag-to-scroll.
+          <img src={project.image} alt={project.title} draggable={false} className="w-full h-full object-contain" />
+        ) : (
+          <div className={`w-full h-full bg-gradient-to-br ${project.gradient}`} />
+        )}
       </div>
       {/* Text */}
       <div className="flex-1 min-h-0 p-2 flex flex-col gap-1 overflow-hidden">
@@ -113,11 +95,8 @@ const ProjectCard = ({ project, isFocused, onActivate, registerRef }) => {
   );
 };
 
-// ── Expanded detail modal ────────────────────────────────────────────────────
-// Portaled to document.body so it escapes the card's transform/clip context
-// (motion.div has a non-identity transform during animation, which would
-// otherwise make `position: fixed` children relative to the card and clipped
-// by its `overflow-hidden`).
+// Portaled to document.body: a `position: fixed` child is positioned relative
+// to the card's animating transform (and clipped by its overflow) otherwise.
 const DetailModal = ({ project, onClose }) => {
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -134,7 +113,7 @@ const DetailModal = ({ project, onClose }) => {
       aria-labelledby="project-detail-title"
     >
       <div
-        className="@container relative w-[min(900px,95vw)] h-[min(640px,90vh)] bg-black/85 border border-white rounded-xl overflow-hidden flex flex-col"
+        className="@container relative w-[min(900px,95vw)] h-[min(640px,90vh)] text-white bg-black/85 border border-white rounded-xl overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -145,16 +124,20 @@ const DetailModal = ({ project, onClose }) => {
         >
           ×
         </button>
-        <div className={`shrink-0 w-full h-[40%] bg-gradient-to-br ${project.gradient} flex items-center justify-center`}>
-          <span className="ftext-lg font-display tracking-wide text-white/70">
-            (placeholder image)
-          </span>
+        <div className="shrink-0 w-full h-[40%] overflow-hidden bg-black flex items-center justify-center">
+          {project.image ? (
+            <img src={project.image} alt={project.title} className="w-full h-full object-contain" />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${project.gradient}`} />
+          )}
         </div>
         <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 flex flex-col gap-2">
           <h2 id="project-detail-title" className="ftext-2xl font-display font-bold tracking-wide">
             {project.title}
           </h2>
-          <p className="ftext-base text-white/85">{project.description}</p>
+          {project.description.split('\n\n').map((para, i) => (
+            <p key={i} className="ftext-base text-white/85">{para}</p>
+          ))}
           <div className="flex flex-wrap gap-1">
             {project.tech.map((t) => (
               <span key={t} className="ftext-xs px-2 py-0.5 rounded-full bg-white/10 border border-white/20">
@@ -162,10 +145,17 @@ const DetailModal = ({ project, onClose }) => {
               </span>
             ))}
           </div>
+          {project.images?.length > 0 && (
+            <div className="flex flex-col gap-2 mt-1">
+              {project.images.map((src, i) => (
+                <img key={i} src={src} alt={`${project.title} screenshot ${i + 1}`} className="w-full rounded-lg border border-white/15" />
+              ))}
+            </div>
+          )}
           <div className="mt-2 flex gap-3 ftext-sm">
             {project.links?.demo && (
               <a href={project.links.demo} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-blue-300 transition-colors">
-                <FaExternalLinkAlt /> Live demo
+                <FaExternalLinkAlt /> {project.links.demoLabel || 'Live demo'}
               </a>
             )}
             {project.links?.github && (
@@ -181,7 +171,6 @@ const DetailModal = ({ project, onClose }) => {
   );
 };
 
-// ── Carousel ─────────────────────────────────────────────────────────────────
 const Portfolio = () => {
   const [focusedIdx, setFocusedIdx] = useState(0);
   const [expandedId, setExpandedId] = useState(null);
@@ -190,11 +179,13 @@ const Portfolio = () => {
   const itemRefs = useRef([]);
   const rafId = useRef(null);
 
-  // Pointer-drag state. `moved` is read by the click gate so a drag-released
-  // pointer doesn't also trigger the card's onClick.
+  // Mirror so the once-attached wheel handler reads the live index.
+  const focusedIdxRef = useRef(0);
+  const wheelAccum = useRef(0);
+  const lastWheelTs = useRef(0);
+
   const dragState = useRef({ active: false, captured: false, moved: false, startX: 0, startScrollLeft: 0, pointerId: null });
 
-  // Centered item = scrollLeft-nearest. Cheap; runs in a rAF on scroll.
   const updateFocused = useCallback(() => {
     const c = scrollRef.current;
     if (!c) return;
@@ -223,7 +214,6 @@ const Portfolio = () => {
     el.scrollIntoView({ behavior, inline: 'center', block: 'nearest' });
   }, []);
 
-  // Center the first card on mount; paint the initial focused state.
   useEffect(() => {
     scrollToIdx(0, 'auto');
     requestAnimationFrame(updateFocused);
@@ -233,8 +223,34 @@ const Portfolio = () => {
     if (rafId.current) cancelAnimationFrame(rafId.current);
   }, []);
 
-  // Keyboard: arrows / home / end navigate; Enter opens the focused card.
-  // Modal handles its own Escape.
+  useEffect(() => { focusedIdxRef.current = focusedIdx; }, [focusedIdx]);
+
+  // Vertical wheel drives horizontal movement, one card per notch. Native
+  // non-passive listener because React's onWheel is passive (preventDefault
+  // would no-op). Delta accumulates and resets after a gap so a trackpad's
+  // many small deltas read as one gesture.
+  useEffect(() => {
+    const c = scrollRef.current;
+    if (!c) return;
+    const STEP = 90;
+    const GESTURE_GAP = 200;
+    const onWheelNative = (e) => {
+      const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      if (!delta) return;
+      e.preventDefault();
+      const now = performance.now();
+      if (now - lastWheelTs.current > GESTURE_GAP) wheelAccum.current = 0;
+      lastWheelTs.current = now;
+      wheelAccum.current += delta;
+      let idx = focusedIdxRef.current;
+      while (wheelAccum.current >= STEP && idx < projects.length - 1) { idx++; wheelAccum.current -= STEP; }
+      while (wheelAccum.current <= -STEP && idx > 0) { idx--; wheelAccum.current += STEP; }
+      if (idx !== focusedIdxRef.current) scrollToIdx(idx);
+    };
+    c.addEventListener('wheel', onWheelNative, { passive: false });
+    return () => c.removeEventListener('wheel', onWheelNative);
+  }, [scrollToIdx]);
+
   const onKeyDown = (e) => {
     if (expandedId) return;
     let next = focusedIdx;
@@ -254,13 +270,9 @@ const Portfolio = () => {
     if (next !== focusedIdx) scrollToIdx(next);
   };
 
-  // Mouse drag-to-scroll. Touch is left to native (scroll-snap handles it);
-  // wheel/trackpad horizontal scrolling is also native.
-  // We commit to a drag only after exceeding DRAG_THRESHOLD_PX, then take
-  // pointer capture so the gesture survives the pointer leaving the carousel.
-  // NEVER call e.stopPropagation() on pointerdown/up — OrbitControls listens
-  // for pointerup on `document` and a swallowed release leaves the camera
-  // stuck mid-rotate (see CardOverlay.jsx comment).
+  // Mouse drag-to-scroll; touch/trackpad stay native. Commit only past the
+  // threshold, then capture so the drag survives leaving the carousel.
+  // Never stopPropagation pointer events here — see the CardOverlay gotcha.
   const onPointerDown = (e) => {
     if (e.pointerType !== 'mouse') return;
     if (e.button !== 0) return;
@@ -295,21 +307,22 @@ const Portfolio = () => {
     if (d.captured) {
       try { scrollRef.current.releasePointerCapture(e.pointerId); } catch { /* noop */ }
     }
-    // d.moved stays true until the next click is gated; reset in handleActivate.
   };
 
-  // Click on a card should NOT open the modal if the click was the tail of a
-  // drag-to-scroll. The pointer-capture path normally redirects the click off
-  // the button anyway, but this is a belt-and-suspenders gate.
-  const handleActivate = (id) => {
+  // Clicking a side card centers it; only the centered card opens. A drag's
+  // trailing click is gated out via dragState.moved.
+  const handleActivate = (idx, id) => {
     if (dragState.current.moved) {
       dragState.current.moved = false;
+      return;
+    }
+    if (idx !== focusedIdx) {
+      scrollToIdx(idx);
       return;
     }
     setExpandedId(id);
   };
 
-  // Keep visual + DOM focus in sync when tabbing through cards.
   const onCardFocus = (idx) => {
     scrollToIdx(idx);
   };
@@ -346,7 +359,7 @@ const Portfolio = () => {
             key={p.id}
             project={p}
             isFocused={idx === focusedIdx}
-            onActivate={() => handleActivate(p.id)}
+            onActivate={() => handleActivate(idx, p.id)}
             registerRef={(el) => {
               itemRefs.current[idx] = el;
               if (el) el.onfocus = () => onCardFocus(idx);

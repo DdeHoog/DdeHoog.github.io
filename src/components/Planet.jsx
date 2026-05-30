@@ -1,5 +1,4 @@
-// Click-target sphere for one section. Visual card rendering lives in <CardOverlay>
-// outside the Canvas (see Hero.jsx); this component is purely the 3D mesh + click hit.
+// Click-target sphere for one section; the card itself renders in <CardOverlay>.
 const Planet = ({ section, onPlanetClick }) => {
   return (
     <mesh

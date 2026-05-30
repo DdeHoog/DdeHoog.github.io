@@ -1,7 +1,5 @@
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
-// `?inline` embeds the (already tiny) avatar as a base64 data URI so it's part
-// of the bundle and present the instant the card mounts — no fetch, no
-// decode-from-disk flash of the alt text.
+// `?inline` bundles the avatar as a data URI so it's present on card mount.
 import profilePic from '../assets/profilePic.jpg?inline';
 
 const About = () => {

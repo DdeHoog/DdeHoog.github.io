@@ -48,13 +48,9 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
       <Canvas
         className="hero-canvas"
         frameloop="demand"
-        // Clamp device pixel ratio. R3F defaults to the display's full DPR,
-        // which on a 1.5x/2x screen renders 2.25-4x the pixel count of 1080p
-        // for no real visual gain on a stylised cosmic scene. 1.5 cap keeps it
-        // crisp while massively cutting fillrate.
+        // Clamp DPR — biggest fillrate win on hi-DPI; 1.5 still looks crisp.
         dpr={[1, 1.5]}
-        // If perf still drags, R3F can adaptively lower DPR when the frame
-        // budget slips; tune the floor with `min`.
+        // R3F may drop DPR toward this floor under load.
         performance={{ min: 0.5 }}
       >
         <Scene

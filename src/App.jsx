@@ -3,13 +3,10 @@ import { Suspense, useRef, useState } from 'react';
 
 
 function App() {
-  const heroRef = useRef(); // Ref to access the Hero component
-
-  // State to manage visibility of Hero content
-  const [heroContentVisible, setHeroContentVisible] = useState(false); 
+  const heroRef = useRef();
+  const [heroContentVisible, setHeroContentVisible] = useState(false);
 
   const handleNavigate = (sectionName, position) => {
-    // Calls the navigateToSection method on the Hero component
     if (heroRef.current) {
       heroRef.current.navigateToSection(sectionName, position);
     }
@@ -17,16 +14,15 @@ function App() {
 
   return (
     <div>
-      <NavBar 
+      <NavBar
         onLogoClick={() => heroRef.current?.resetCamera()}
-        onPlanetClick={handleNavigate}// Calls the navigateToSection method on Hero component
-        showTooltipOnHeroContentVisible={heroContentVisible} // Pass the function to set hero content visibility
+        onPlanetClick={handleNavigate}
+        showTooltipOnHeroContentVisible={heroContentVisible}
       />
-      <Hero 
+      <Hero
         ref={heroRef}
-        onSetHeroContentVisible={setHeroContentVisible} // Pass the setter function to Hero
+        onSetHeroContentVisible={setHeroContentVisible}
       />
-
     </div>
   )
 }

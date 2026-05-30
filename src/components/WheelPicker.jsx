@@ -1,27 +1,9 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-// iOS-style vertical wheel picker.
-//
-// Items in the visible center are flat / forward-facing; items above and below
-// curve back proportionally to their distance from center (rotateX + scale +
-// opacity).
-//
-// Scrolling: the mouse wheel is intercepted and translated into a *smooth*
-// proportional glide (scroll distance ∝ wheel delta, eased), which then snaps to
-// the nearest item once scrolling stops. This avoids both the old "hard stop on
-// every item" and the "skip several items per notch" feels. Touch and keyboard
-// use native scroll / explicit centering; the same snap-on-settle applies.
-//
-// Props:
-//   items: Array<{ id, name, icon? }>  (icon is a react-icons component)
-//   selectedId: id of currently selected item
-//   onSelect: (id) => void  — fires when the centered item changes after scroll
-//   itemHeight?: pixel height of each item (default 36)
-//   maxRotate?: degrees of rotateX at the top/bottom edge (default 50)
-//   maxScale?: scale reduction at the edge (default 0.18 ⇒ edge scale 0.82)
-//   wheelSpeed?: scroll px per wheel-delta px (default 0.3). Lower = fewer items
-//                advanced per notch; raise it if a notch moves too little.
-//   className?: applied to outer scroll container
+// iOS-style vertical wheel picker. Center items face forward; edge items curve
+// back (rotateX + scale + opacity). Wheel input is intercepted into a smooth
+// glide that snaps to the nearest item on settle; touch/keyboard use native
+// scroll + the same snap.
 const WheelPicker = ({
   items,
   selectedId,
@@ -63,9 +45,7 @@ const WheelPicker = ({
     });
   }, [maxRotate, maxScale]);
 
-  // Item index whose center is nearest the viewport center. Given the layout
-  // (top spacer = 50% - itemHeight/2), scrollTop = i * itemHeight centers item i,
-  // so the centered index is simply round(scrollTop / itemHeight).
+  // Layout makes scrollTop = i*itemHeight center item i, so round() gives the index.
   const centeredIndex = useCallback(() => {
     const container = containerRef.current;
     if (!container) return 0;
@@ -75,7 +55,6 @@ const WheelPicker = ({
     );
   }, [items.length, itemHeight]);
 
-  // Smoothly ease container.scrollTop toward targetScroll.
   const animateScroll = useCallback(() => {
     const container = containerRef.current;
     if (!container || targetScroll.current == null) {
@@ -95,8 +74,6 @@ const WheelPicker = ({
     rafScroll.current = requestAnimationFrame(animateScroll);
   }, [updateTransforms]);
 
-  // Scroll the selected item to center (used on mount, on tab/list change, and
-  // when an item is clicked). 'auto' lands instantly (mount); 'smooth' animates.
   const scrollToId = useCallback((id, behavior = 'smooth') => {
     const idx = items.findIndex((i) => i.id === id);
     if (idx < 0) return;
@@ -114,7 +91,7 @@ const WheelPicker = ({
       });
     }
 
-    // After scrolling settles, snap to the nearest item center and select it.
+    // On settle, snap to the nearest item and select it.
     if (snapTimer.current) clearTimeout(snapTimer.current);
     snapTimer.current = setTimeout(() => {
       const container = containerRef.current;
@@ -132,9 +109,7 @@ const WheelPicker = ({
     }, 120);
   }, [updateTransforms, centeredIndex, itemHeight, items, selectedId, onSelect, animateScroll]);
 
-  // Intercept the wheel (non-passive so we can preventDefault) and turn it into a
-  // smooth proportional glide. Touch is unaffected (no wheel events) — native
-  // scroll + the snap-on-settle above handle it.
+  // Non-passive wheel → smooth glide (React's onWheel is passive).
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -143,17 +118,13 @@ const WheelPicker = ({
       e.preventDefault();
       const now = performance.now();
       const maxScroll = container.scrollHeight - container.clientHeight;
-      // Start of a fresh gesture: seat the target at the current position so
-      // small (trackpad) deltas accumulate within a gesture but reset between.
+      // Fresh gesture: reseat the target so deltas accumulate within a gesture, not across.
       if (targetScroll.current == null || now - lastWheelTs.current > 200) {
         targetScroll.current = container.scrollTop;
       }
       lastWheelTs.current = now;
       const delta = e.deltaMode === 1 ? e.deltaY * itemHeight : e.deltaY;
-      // Cap a single event's contribution to one item so one wheel notch always
-      // advances exactly one item regardless of how large the notch delta is
-      // (high-delta mice would otherwise jump 2+). Fast multi-notch spins still
-      // accumulate across events; small trackpad deltas pass through unchanged.
+      // Cap one event to one item so a single notch never skips.
       let move = delta * wheelSpeed;
       move = Math.max(-itemHeight, Math.min(itemHeight, move));
       targetScroll.current = Math.max(
@@ -169,8 +140,7 @@ const WheelPicker = ({
     return () => container.removeEventListener('wheel', onWheel);
   }, [animateScroll, itemHeight, wheelSpeed]);
 
-  // Initial centering + transform paint. Re-runs when the items array changes
-  // (e.g. switching tabs).
+  // Center on mount and when items/selection change.
   useEffect(() => {
     if (selectedId != null) {
       scrollToId(selectedId, 'auto');
@@ -184,7 +154,6 @@ const WheelPicker = ({
     return () => window.removeEventListener('resize', onResize);
   }, [updateTransforms]);
 
-  // Cancel any in-flight animations / timers on unmount.
   useEffect(() => () => {
     if (rafId.current) cancelAnimationFrame(rafId.current);
     if (rafScroll.current) cancelAnimationFrame(rafScroll.current);
@@ -227,9 +196,7 @@ const WheelPicker = ({
 
   return (
     <div className={`relative h-full ${className}`}>
-      {/* Selection band: thin shaded strip at the vertical center of the wheel,
-          indicating where the "selected" item sits. Pointer-events-none so it
-          doesn't intercept clicks/scrolls on the wheel below. */}
+      {/* Center selection band; pointer-events-none so it never blocks scroll. */}
       <div
         className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 z-10 border-y border-white/20 bg-white/5"
         style={{ height: itemHeight }}
@@ -241,12 +208,9 @@ const WheelPicker = ({
         className="wheel-picker h-full overflow-y-auto outline-none"
         style={{
           perspective: '600px',
-          // Snapping is handled in JS (smooth glide + snap-on-settle), so native
-          // scroll-snap is disabled to avoid it fighting the programmatic glide.
+          // JS handles snapping; native scroll-snap would fight the glide.
           scrollSnapType: 'none',
-          // Fade items toward the top and bottom edges of the container so the
-          // wheel reads as receding into the distance rather than ending on a
-          // hard line of empty space at the boundaries.
+          // Fade the top/bottom edges so the wheel reads as receding.
           maskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
           WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%)',
         }}

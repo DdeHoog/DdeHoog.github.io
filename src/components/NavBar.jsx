@@ -5,10 +5,11 @@ const NavBar = ({ onLogoClick, onPlanetClick, showTooltipOnHeroContentVisible })
 
     return (
         <nav
-            className="fixed top-0 left-0 w-full h-[60px] bg-black/70 flex justify-between px-4 md:px-8
-                        items-center text-white font-bold z-10 box-border font-display"
+            className="fixed top-0 left-0 w-full h-[60px] flex justify-between px-4 md:px-8
+                        items-center text-white font-bold z-10 box-border font-display
+                        pointer-events-none"
         >
-            <div className="group relative flex items-center">
+            <div className="group relative flex items-center pointer-events-auto">
                 <a 
                     href="#hero" 
                     onClick={onLogoClick}
@@ -33,7 +34,7 @@ const NavBar = ({ onLogoClick, onPlanetClick, showTooltipOnHeroContentVisible })
 
 
             <ul
-                className="sm:flex gap-4 mt-4 -mr-2 sm:mr-0 sm:mt-4">
+                className="sm:flex gap-4 mt-4 -mr-2 sm:mr-0 sm:mt-4 pointer-events-auto">
                     {SECTIONS.map((section) => (
                         <li key={section.id}>
                             <button

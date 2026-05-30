@@ -13,10 +13,12 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
   const [shouldResetCamera, setShouldResetCamera] = useState(false);
   const [cardOpen, setCardOpen] = useState(false); // gates whether OrbitControls onStart hides hero text
   const [showCard, setShowCard] = useState(false); // toggled by Scene once camera lerp arrives
+  const [cardNonce, setCardNonce] = useState(0); // bumped per open so each card gets a unique AnimatePresence key
   const sceneRef = useRef(null); // Reference to the Scene component for navbar buttons
 
   useImperativeHandle(ref, () => ({
     resetCamera: () => {
+      if (sceneRef.current?.isBusy?.()) return;
       setShouldResetCamera(true);
       setActiveSection(null);
     },
@@ -61,6 +63,7 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
           setActivePlanetPosition={setActivePlanetPosition}
           showCard={showCard}
           setShowCard={setShowCard}
+          setCardNonce={setCardNonce}
           setShowContent={(val) => {
             setShowContent(val);
             if (onSetHeroContentVisible) {
@@ -77,6 +80,7 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
       <CardOverlay
         activeSection={activeSection}
         showCard={showCard}
+        cardNonce={cardNonce}
         onClose={handleCloseCard}
       />
 

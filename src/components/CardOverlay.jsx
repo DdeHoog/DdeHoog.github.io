@@ -17,7 +17,7 @@ const renderSectionContent = (activeSection) => {
   }
 };
 
-const CardOverlay = ({ activeSection, showCard, onClose }) => {
+const CardOverlay = ({ activeSection, showCard, cardNonce, onClose }) => {
   const isVisible = showCard && activeSection;
 
   return (
@@ -28,7 +28,9 @@ const CardOverlay = ({ activeSection, showCard, onClose }) => {
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            key={activeSection}
+            // Unique per open (not just activeSection) so a reopened card never
+            // collides with the same-section card still animating out.
+            key={`${activeSection}-${cardNonce}`}
             // Outer wrapper rides the planet's projected screen position via
             // x/y MotionValues; centering is handled by the middle div below.
             style={{
@@ -44,17 +46,21 @@ const CardOverlay = ({ activeSection, showCard, onClose }) => {
                 className="
                   @container
                   relative pointer-events-auto flex flex-col text-white
-                  w-[90vw] max-w-[880px]
-                  h-[78vh] max-h-[620px]
+                  w-[90vw] max-w-[1280px]
+                  h-[80vh] max-h-[720px]
                   bg-black/80 backdrop-blur-md
                   border border-white rounded-xl
                   p-2 sm:p-3
                   shadow-[0_0_20px_rgba(255,255,255,0.1)]
                   overflow-hidden
                 "
-                initial={{ opacity: 0, scale: 0.5, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.5, y: 20 }}
+                // pointerEvents is gated to the animation: none while opening
+                // (from initial) → auto once the open settles (transitionEnd) →
+                // none again on exit. Stops clicks landing on content (e.g. a
+                // project card) before the card has finished opening/closing.
+                initial={{ opacity: 0, scale: 0.5, y: 20, pointerEvents: 'none' }}
+                animate={{ opacity: 1, scale: 1, y: 0, transitionEnd: { pointerEvents: 'auto' } }}
+                exit={{ opacity: 0, scale: 0.5, y: 20, pointerEvents: 'none' }}
                 transition={{ type: 'spring', stiffness: 50, damping: 15 }}
                 // Never stopPropagation pointerdown/up: OrbitControls listens for
                 // pointerup on `document`, so swallowing it leaves the camera

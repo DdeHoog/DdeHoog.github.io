@@ -16,6 +16,8 @@ const LERP_DISTANCE_FACTOR = 0.14; // extra seconds per world-unit travelled
 const CARD_OPEN_AT = 0.85;         // fraction of eased distance at which the card opens
 const MIN_ZOOM_DISTANCE = 2.5;     // keep ≤ APPROACH_DISTANCE
 const MAX_ZOOM_DISTANCE = 24;
+const CARD_OPEN_LOCK_MS = 500;     // transition-lock window after a card opens
+const CARD_CLOSE_LOCK_MS = 320;    // shorter — the card reads as closed well before the spring fully settles
 
 const easeInOutCubic = (t) =>
   t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -26,6 +28,7 @@ const Scene = forwardRef(({
     setActivePlanetPosition,
     showCard,
     setShowCard,
+    setCardNonce,
     setShowContent,
     shouldResetCamera,
     setShouldResetCamera,
@@ -48,6 +51,10 @@ const Scene = forwardRef(({
   const lerpElapsed = useRef(0);
   const lerpDuration = useRef(LERP_MIN_DURATION);
   const cardFired = useRef(false);
+  const cardLockUntil = useRef(0); // timestamp; transition lock while a card open/close animates
+
+  // Transition in progress: camera flying, or a card open/close still animating.
+  const isTransitioning = () => isLerping || performance.now() < cardLockUntil.current;
 
   // Targets must be set before calling.
   const beginLerp = () => {
@@ -109,7 +116,10 @@ const Scene = forwardRef(({
     if (!controlsRef.current) return;
 
     if (isLerping) {
-      lerpElapsed.current += delta;
+      // Clamp delta: under frameloop="demand" the first frame after an idle
+      // period (e.g. reading an open card) carries all the elapsed wall-time,
+      // which would otherwise jump elapsed past the duration and teleport.
+      lerpElapsed.current += Math.min(delta, 0.05);
       const t = Math.min(1, lerpElapsed.current / lerpDuration.current);
       const e = easeInOutCubic(t);
 
@@ -121,6 +131,8 @@ const Scene = forwardRef(({
       const navigating = sectionNameRef.current !== null;
       if (navigating && !cardFired.current && e >= CARD_OPEN_AT) {
         cardFired.current = true;
+        cardLockUntil.current = performance.now() + CARD_OPEN_LOCK_MS;
+        setCardNonce((n) => n + 1);
         setActiveSection(sectionNameRef.current);
         setShowCard(true);
       }
@@ -134,6 +146,8 @@ const Scene = forwardRef(({
         // Fallback if the card never fired mid-flight.
         if (navigating && !cardFired.current) {
           cardFired.current = true;
+          cardLockUntil.current = performance.now() + CARD_OPEN_LOCK_MS;
+          setCardNonce((n) => n + 1);
           setActiveSection(sectionNameRef.current);
           setShowCard(true);
         }
@@ -143,6 +157,10 @@ const Scene = forwardRef(({
   });
 
   const openSection = (sectionName, planetPosition) => {
+    // Ignore new open/close requests while a transition (camera or card
+    // animation) is still in progress, so rapid clicks can't restart the lerp
+    // or bounce a half-open card.
+    if (isTransitioning()) return;
     const isOpen = sectionName !== null;
     setCardOpen(isOpen);
 
@@ -167,6 +185,7 @@ const Scene = forwardRef(({
       setActivePlanetPosition(null);
       setActiveSection(null);
       setShowCard(false);
+      cardLockUntil.current = performance.now() + CARD_CLOSE_LOCK_MS; // lock until the card reads as closed
 
       if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
       fadeInTimeout.current = setTimeout(() => {
@@ -176,7 +195,8 @@ const Scene = forwardRef(({
   };
 
   useImperativeHandle(ref, () => ({
-    openSection
+    openSection,
+    isBusy: isTransitioning,
   }));
 
   return (

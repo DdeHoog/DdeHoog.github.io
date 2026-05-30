@@ -22,7 +22,7 @@ const About = () => {
 
         {/* Main content: Introduction */}
         <div className="flex-1 flex items-center justify-center text-center px-2 py-2">
-          <p className="ftext-base leading-relaxed max-w-xl">
+          <p className="ftext-base leading-relaxed max-w-2xl">
             I'm a multidisciplinary developer with a passion for engineering, AI, robotics, and creative exploration.
             With a background spanning tech, military, research as well as international and intercultural relations and work. <br />
             <br />

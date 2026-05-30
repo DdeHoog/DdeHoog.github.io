@@ -7,20 +7,8 @@ export default defineConfig({
   base: '/',
   plugins: [react(), tailwindcss()],
   assetsInclude: ['**/*.gltf', '**/*.glb'],
-  build: {
-    // three.js is inherently large; the chunk below is intentional.
-    chunkSizeWarningLimit: 800,
-    rollupOptions: {
-      output: {
-        // Split heavy, rarely-changing deps into their own chunks so they stay
-        // browser-cached across deploys when only app code changes.
-        manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-          if (id.includes('@react-three')) return 'react-three';
-          if (id.includes('three')) return 'three';
-          return 'vendor';
-        },
-      },
-    },
-  },
+  // NOTE: do not manualChunks-split `three` / `@react-three/*` into separate
+  // chunks — it builds fine but blanks the page in production (module init-order
+  // / circular-dep across the chunk boundary). Dev doesn't chunk, so it hides
+  // the bug. Keep them in the single default bundle.
 })

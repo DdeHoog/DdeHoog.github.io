@@ -22,7 +22,7 @@ npm install
 | Command           | What it does                                                                  |
 |-------------------|-------------------------------------------------------------------------------|
 | `npm run dev`     | Start the Vite dev server with HMR (defaults to http://localhost:5173).       |
-| `npm run build`   | Type-free production build into `dist/`.                                      |
+| `npm run build`   | Production build into `dist/`.                                                |
 | `npm run preview` | Serve the production build locally for a final smoke test.                    |
 | `npm run lint`    | Run ESLint over the project.                                                  |
 
@@ -39,18 +39,19 @@ You should see the 3D scene load. Click on one of the colored planets, or use th
 ## Project layout (short version)
 
 ```
-public/    spaceboi.gltf + .bin + .glb + Spaceboi.jsx (3D model assets)
+public/    spaceboi-meshopt.glb (3D model, meshopt-compressed)
 src/
   App.jsx                # composes <NavBar/> and <Hero/>
   components/
-    Hero.jsx             # <Canvas> wrapper + welcome overlay
+    Hero.jsx             # <Canvas> wrapper + welcome overlay + card overlay
     Scene.jsx            # camera lerping + section orchestration
-    Planets.jsx          # the three clickable spheres + HTML cards
+    Planets.jsx          # the three clickable planet spheres
+    CardOverlay.jsx      # screen-space card that rides each planet's position
     NavBar.jsx           # logo + section buttons
     Experience.jsx       # resume content
     About.jsx            # contact card
-    Portfolio.jsx        # (placeholder — to become a project carousel)
-  index.css              # global styles incl. planet-card responsive sizing
+    Portfolio.jsx        # project carousel + detail modal
+  index.css              # global styles + fluid (container-query) type
 ```
 
 ## Credits

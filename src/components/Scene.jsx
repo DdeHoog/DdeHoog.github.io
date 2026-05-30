@@ -25,7 +25,6 @@ const easeInOutCubic = (t) =>
 const Scene = forwardRef(({
     activeSection,
     setActiveSection,
-    setActivePlanetPosition,
     showCard,
     setShowCard,
     setCardNonce,
@@ -86,7 +85,6 @@ const Scene = forwardRef(({
 
   useEffect(() => {
     if (shouldResetCamera && controlsRef.current) {
-      setActivePlanetPosition(null);
       sectionNameRef.current = null;
       setActiveSection(null);
       setShowCard(false);
@@ -168,7 +166,6 @@ const Scene = forwardRef(({
       setShowCard(false);
       setShowContent(false);
       sectionNameRef.current = sectionName;
-      setActivePlanetPosition(planetPosition);
 
       if (fadeInTimeout.current) clearTimeout(fadeInTimeout.current);
 
@@ -182,7 +179,6 @@ const Scene = forwardRef(({
       beginLerp();
     } else {
       sectionNameRef.current = null;
-      setActivePlanetPosition(null);
       setActiveSection(null);
       setShowCard(false);
       cardLockUntil.current = performance.now() + CARD_CLOSE_LOCK_MS; // lock until the card reads as closed

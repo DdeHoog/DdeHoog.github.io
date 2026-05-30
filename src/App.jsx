@@ -1,5 +1,5 @@
-import { About, Experience, Hero, Portfolio, NavBar } from './components'
-import { Suspense, useRef, useState } from 'react';
+import { Hero, NavBar } from './components'
+import { useRef, useState } from 'react';
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
       <NavBar
         onLogoClick={() => heroRef.current?.resetCamera()}
         onPlanetClick={handleNavigate}
-        showTooltipOnHeroContentVisible={heroContentVisible}
+        showResetHint={heroContentVisible}
       />
       <Hero
         ref={heroRef}

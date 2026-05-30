@@ -27,10 +27,6 @@ export const SECTIONS = [
   },
 ];
 
-export const SECTIONS_BY_ID = Object.fromEntries(
-  SECTIONS.map((s) => [s.id, s])
-);
-
 export const HOME_CAMERA = {
   position: [0, 5, 8],
   lookAt: [0, 3.5, 0],

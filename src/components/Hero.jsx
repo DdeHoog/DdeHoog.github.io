@@ -9,7 +9,6 @@ import { useEffect, useState, useRef, forwardRef, useImperativeHandle } from 're
 const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
   const [showContent, setShowContent] = useState(false);
   const [activeSection, setActiveSection] = useState(null);
-  const [activePlanetPosition, setActivePlanetPosition] = useState(null);
   const [shouldResetCamera, setShouldResetCamera] = useState(false);
   const [cardOpen, setCardOpen] = useState(false); // gates whether OrbitControls onStart hides hero text
   const [showCard, setShowCard] = useState(false); // toggled by Scene once camera lerp arrives
@@ -59,8 +58,6 @@ const Hero = forwardRef(({ onSetHeroContentVisible }, ref) => {
           ref={sceneRef}
           activeSection={activeSection}
           setActiveSection={setActiveSection}
-          activePlanetPosition={activePlanetPosition}
-          setActivePlanetPosition={setActivePlanetPosition}
           showCard={showCard}
           setShowCard={setShowCard}
           setCardNonce={setCardNonce}
